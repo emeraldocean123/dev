@@ -9,8 +9,9 @@ Performance: 50-100x faster than PowerShell version for large directories.
 - PowerShell: Spawns exiftool process per file (2× per file = 20,000 processes for 10,000 files)
 - Python: Single batch read + batch write (2 total exiftool invocations)
 
+Version: 2.0.0 (Unified with media_common library)
 Author: Generated with Claude Code
-Date: 2025-11-18
+Date: 2025-11-21
 """
 
 import os
@@ -21,31 +22,13 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
-def get_exiftool_path():
-    """Locate ExifTool executable."""
-    # Common installation paths
-    paths = [
-        r"D:\Files\Programs-Portable\ExifTool\exiftool.exe",
-        r"C:\Windows\exiftool.exe",
-        r"C:\Program Files\ExifTool\exiftool.exe"
-    ]
-
-    # Check specific paths first
-    for p in paths:
-        if os.path.exists(p):
-            return p
-
-    # Fall back to PATH
-    return "exiftool"
-
-EXIFTOOL = get_exiftool_path()
-
-# Supported file extensions
-EXTENSIONS = [
-    "jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif",
-    "mov", "mp4", "avi", "mkv", "m4v", "mpg", "mpeg",
-    "heic", "heif", "webp", "cr2", "nef", "arw", "dng"
-]
+# Import shared library
+sys.path.append(str(Path(__file__).parent.parent))
+from lib.media_common import (
+    get_exiftool_path, ALL_MEDIA_EXTENSIONS, check_dependencies,
+    print_phase, print_success, print_warning, print_error,
+    setup_logging
+)
 
 def get_all_metadata(directory, recursive=True):
     """Reads metadata for ALL files in directory in one massive batch."""
@@ -53,13 +36,16 @@ def get_all_metadata(directory, recursive=True):
     if recursive:
         print("  (Recursive scan enabled)")
 
-    # Build extension filters
+    exiftool_exe = get_exiftool_path()
+
+    # Dynamic extension filters from shared library
     ext_args = []
-    for ext in EXTENSIONS:
-        ext_args.extend(["-ext", ext])
+    for ext in ALL_MEDIA_EXTENSIONS:
+        clean_ext = ext.lstrip('.')
+        ext_args.extend(["-ext", clean_ext])
 
     cmd = [
-        EXIFTOOL,
+        exiftool_exe,
         "-json",
         "-DateTimeOriginal",
         "-CreateDate",
@@ -216,6 +202,8 @@ def batch_update_exif(updates, dry_run=False):
             print(f"  ... and {count - 10} more")
         return
 
+    exiftool_exe = get_exiftool_path()
+
     # Create argument file for batch processing
     arg_file = "exif_batch_update.txt"
 
@@ -231,7 +219,7 @@ def batch_update_exif(updates, dry_run=False):
                 f.write("-execute\n")
 
         # Run ExifTool with argument file
-        cmd = [EXIFTOOL, "-@", arg_file]
+        cmd = [exiftool_exe, "-@", arg_file]
         result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode == 0:
@@ -273,11 +261,12 @@ Examples:
         sys.exit(1)
 
     # Check ExifTool availability
+    exiftool_exe = get_exiftool_path()
     try:
-        result = subprocess.run([EXIFTOOL, "-ver"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run([exiftool_exe, "-ver"], capture_output=True, text=True, timeout=5)
         print(f"Using ExifTool version: {result.stdout.strip()}")
     except Exception:
-        print(f"Error: ExifTool not found at: {EXIFTOOL}", file=sys.stderr)
+        print(f"Error: ExifTool not found at: {exiftool_exe}", file=sys.stderr)
         print("Please install ExifTool or update EXIFTOOL path in script", file=sys.stderr)
         sys.exit(1)
 

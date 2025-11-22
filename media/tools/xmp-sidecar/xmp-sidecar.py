@@ -6,22 +6,22 @@ Safely exports all metadata from photos and videos to XMP sidecar files.
 Interactive with progress bars, phase indicators, and graceful cancellation.
 Supports both Adobe (filename.xmp) and Extension (filename.ext.xmp) naming.
 
-Version: 2.6.3
+Version: 3.0.0 (Unified with media_common library)
 License: MIT
 Author: emeraldocean123
 Repository: https://github.com/emeraldocean123/xmp-sidecar-pro
 
 Usage:
-    python xmp-sidecar-pro.py /path/to/photos
-    python xmp-sidecar-pro.py --directory "C:/Photos" --naming ext
-    python xmp-sidecar-pro.py --workers 12 --batch-size 100
-    python xmp-sidecar-pro.py --dry-run --skip-existing --quiet
+    python xmp-sidecar.py /path/to/photos
+    python xmp-sidecar.py --directory "C:/Photos" --naming ext
+    python xmp-sidecar.py --workers 12 --batch-size 100
+    python xmp-sidecar.py --dry-run --skip-existing --quiet
 
 Requirements:
     pip install tqdm colorama
 """
 
-__version__ = "2.6.3"
+__version__ = "3.0.0"
 __author__ = "emeraldocean123"
 __license__ = "MIT"
 
@@ -40,6 +40,14 @@ import argparse
 from datetime import datetime
 import re
 
+# Import shared library
+sys.path.append(str(Path(__file__).parent.parent))
+from lib.media_common import (
+    PHOTO_EXTENSIONS, VIDEO_EXTENSIONS, SKIP_DIRS,
+    WORKER_PROFILES, get_optimal_workers,
+    print_phase, print_success, print_error, print_warning, print_info
+)
+
 try:
     from tqdm import tqdm
 except ImportError:
@@ -54,29 +62,6 @@ except ImportError:
         GREEN = RED = YELLOW = CYAN = MAGENTA = BLUE = WHITE = ''
     class Style:
         BRIGHT = RESET_ALL = ''
-
-# Supported file extensions
-PHOTO_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.tiff', '.tif', '.heic', '.heif',
-                   '.dng', '.cr2', '.cr3', '.nef', '.arw', '.orf', '.rw2', '.raw',
-                   '.avif', '.webp', '.jxl'}
-VIDEO_EXTENSIONS = {'.mp4', '.mov', '.avi', '.mkv', '.m4v', '.mpg', '.mpeg',
-                   '.wmv', '.flv', '.webm', '.3gp', '.mts', '.m2ts',
-                   '.hevc', '.ts'}
-
-# Folder exclusions (OOM Protection)
-SKIP_DIRS = {
-    '.git', 'node_modules', 'venv', '.venv', '__pycache__', '.idea', '.vscode',
-    'AppData', 'Library', '.npm', '.cache', 'Cache', 'Caches', '.gradle',
-    'target', 'build', 'dist', '.tox', '.mypy_cache', '.pytest_cache'
-}
-
-# Worker profiles
-WORKER_PROFILES = {
-    'conservative': {'workers': 2, 'desc': 'Low CPU usage (2 workers)'},
-    'balanced': {'workers': max(4, mp.cpu_count() // 2), 'desc': f'Balanced ({max(4, mp.cpu_count() // 2)} workers)'},
-    'fast': {'workers': max(1, mp.cpu_count() - 2), 'desc': f'Fast ({max(1, mp.cpu_count() - 2)} workers)'},
-    'maximum': {'workers': mp.cpu_count(), 'desc': f'Maximum ({mp.cpu_count()} workers)'},
-}
 
 # Global flags
 _shutdown_requested = False
@@ -142,30 +127,6 @@ def signal_handler(signum, frame):
             print(f"\n\n{Fore.YELLOW}Stopping... Finishing current batches (Ctrl+C again to force){Style.RESET_ALL}")
     else:
         sys.exit(1)
-
-def print_phase(phase: str, message: str = ""):
-    if _quiet_mode: return
-    print(f"\n{Fore.CYAN}{'='*70}{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}{Style.BRIGHT}  {phase}{Style.RESET_ALL}")
-    if message: print(f"{Fore.WHITE}  {message}{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}{'='*70}{Style.RESET_ALL}\n")
-
-def print_success(msg):
-    if not _quiet_mode: print(f"{Fore.GREEN}  {msg}{Style.RESET_ALL}")
-
-def print_error(msg):
-    if not _quiet_mode: print(f"{Fore.RED}  {msg}{Style.RESET_ALL}")
-
-def print_warning(msg):
-    if not _quiet_mode: print(f"{Fore.YELLOW}  {msg}{Style.RESET_ALL}")
-
-def print_info(msg):
-    if not _quiet_mode: print(f"{Fore.BLUE}  {msg}{Style.RESET_ALL}")
-
-def get_optimal_workers() -> int:
-    cores = mp.cpu_count()
-    if cores <= 4: return max(1, cores - 1)
-    return max(2, cores - 2)
 
 # =============================================================================
 # CORE LOGIC
