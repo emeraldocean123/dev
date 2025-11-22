@@ -95,7 +95,7 @@ function Show-SubMenu {
                    Where-Object {
                        $_.Name -notlike "_*" -and
                        $_.Name -notlike "common.ps1" -and
-                       $_.DirectoryName -notmatch "\\tools$"
+                       $_.DirectoryName -notmatch "[\\/]tools$"
                    } |
                    Sort-Object Name
 
