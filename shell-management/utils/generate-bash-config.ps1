@@ -1,5 +1,5 @@
 # Generate Bash Configuration from Central JSON
-# Reads .config/homelab.settings.json and generates infrastructure/network/config/servers.env
+# Reads .config/homelab.settings.json and generates .config/homelab.env
 # Location: shell-management/utils/generate-bash-config.ps1
 # Usage: ./generate-bash-config.ps1 [-OutputPath <path>]
 
@@ -13,7 +13,7 @@ $devRoot = Resolve-Path (Join-Path $scriptRoot "../..")
 
 # Default output location
 if ([string]::IsNullOrWhiteSpace($OutputPath)) {
-    $OutputPath = Join-Path $devRoot "infrastructure\network\config\servers.env"
+    $OutputPath = Join-Path $devRoot ".config\homelab.env"
 }
 
 # Load configuration

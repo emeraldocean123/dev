@@ -4,13 +4,13 @@
 # Complete LXC container setup with flexible command-line options
 #
 # DEPLOYMENT:
-#   Device: intel-1250p-proxmox-host (192.168.1.40)
+#   Device: intel-1250p-proxmox-host (192.168.1.40) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/lxc-setup.sh
 #
-#   Device: intel-n6005-proxmox-host (192.168.1.41)
+#   Device: intel-n6005-proxmox-host (192.168.1.41) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/lxc-setup.sh
 #
-#   Device: pve-proxmox-backup-server-1250p-lxc (192.168.1.52)
+#   Device: pve-proxmox-backup-server-1250p-lxc (192.168.1.52) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/lxc-setup.sh
 #
 #   Backup: ~/Documents/dev/sh/lxc-setup.sh (Windows)

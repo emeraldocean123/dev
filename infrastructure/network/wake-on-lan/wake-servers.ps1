@@ -117,25 +117,25 @@ Write-Console ""
 # Wake servers based on target
 switch ($Target) {
     '1250p' {
-        Send-WOLPacket -MacAddress $MAC_1250P -ServerName 'intel-1250p (192.168.1.40)'
+        Send-WOLPacket -MacAddress $MAC_1250P -ServerName 'intel-1250p (192.168.1.40)' # NO-LINT: IP-ALLOW (Display only)
     }
     'n6005' {
-        Send-WOLPacket -MacAddress $MAC_N6005 -ServerName 'intel-n6005 (192.168.1.41)'
+        Send-WOLPacket -MacAddress $MAC_N6005 -ServerName 'intel-n6005 (192.168.1.41)' # NO-LINT: IP-ALLOW (Display only)
     }
     'synology' {
-        Send-WOLPacket -MacAddress $MAC_SYNOLOGY -ServerName 'synology-1520-nas (192.168.1.10)'
+        Send-WOLPacket -MacAddress $MAC_SYNOLOGY -ServerName 'synology-1520-nas (192.168.1.10)' # NO-LINT: IP-ALLOW (Display only)
     }
     'proxmox' {
-        Send-WOLPacket -MacAddress $MAC_1250P -ServerName 'intel-1250p (192.168.1.40)'
+        Send-WOLPacket -MacAddress $MAC_1250P -ServerName 'intel-1250p (192.168.1.40)' # NO-LINT: IP-ALLOW (Display only)
         Start-Sleep -Milliseconds 500
-        Send-WOLPacket -MacAddress $MAC_N6005 -ServerName 'intel-n6005 (192.168.1.41)'
+        Send-WOLPacket -MacAddress $MAC_N6005 -ServerName 'intel-n6005 (192.168.1.41)' # NO-LINT: IP-ALLOW (Display only)
     }
     'all' {
-        Send-WOLPacket -MacAddress $MAC_1250P -ServerName 'intel-1250p (192.168.1.40)'
+        Send-WOLPacket -MacAddress $MAC_1250P -ServerName 'intel-1250p (192.168.1.40)' # NO-LINT: IP-ALLOW (Display only)
         Start-Sleep -Milliseconds 500
-        Send-WOLPacket -MacAddress $MAC_N6005 -ServerName 'intel-n6005 (192.168.1.41)'
+        Send-WOLPacket -MacAddress $MAC_N6005 -ServerName 'intel-n6005 (192.168.1.41)' # NO-LINT: IP-ALLOW (Display only)
         Start-Sleep -Milliseconds 500
-        Send-WOLPacket -MacAddress $MAC_SYNOLOGY -ServerName 'synology-1520-nas (192.168.1.10)'
+        Send-WOLPacket -MacAddress $MAC_SYNOLOGY -ServerName 'synology-1520-nas (192.168.1.10)' # NO-LINT: IP-ALLOW (Display only)
     }
 }
 

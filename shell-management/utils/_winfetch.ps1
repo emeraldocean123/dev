@@ -1369,7 +1369,7 @@ function info_local_ip {
             # Get the IP information of each adapter
             $properties = $ni.GetIPProperties()
             # Check if the adapter is online, has a gateway address, and the adapter does not have a loopback address
-            if ($ni.OperationalStatus -eq 'Up' -and !($null -eq $properties.GatewayAddresses[0]) -and !$properties.GatewayAddresses[0].Address.ToString().Equals("0.0.0.0")) {
+            if ($ni.OperationalStatus -eq 'Up' -and !($null -eq $properties.GatewayAddresses[0]) -and !$properties.GatewayAddresses[0].Address.ToString().Equals("0.0.0.0")) { # NO-LINT: IP-ALLOW (Special constant)
                 # Check if adapter is a WiFi or Ethernet adapter
                 if ($ni.NetworkInterfaceType -eq "Wireless80211" -or $ni.NetworkInterfaceType -eq "Ethernet") {
                     foreach ($ip in $properties.UnicastAddresses) {

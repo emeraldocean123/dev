@@ -177,5 +177,33 @@ if (-not (Get-Command wsl -ErrorAction SilentlyContinue)) {
     Start-Sleep -Seconds 2
 }
 
+# Hybrid ENV generation check (only regenerate if stale)
+$configJson = Join-Path $devRoot ".config\homelab.settings.json"
+$configEnv = Join-Path $devRoot ".config\homelab.env"
+$envGenerator = Join-Path $devRoot "shell-management\utils\generate-bash-config.ps1"
+
+if (Test-Path $configJson) {
+    $needsRegeneration = $false
+
+    if (-not (Test-Path $configEnv)) {
+        # ENV file doesn't exist
+        $needsRegeneration = $true
+    } else {
+        # Check if JSON is newer than ENV
+        $jsonTimestamp = (Get-Item $configJson).LastWriteTime
+        $envTimestamp = (Get-Item $configEnv).LastWriteTime
+        if ($jsonTimestamp -gt $envTimestamp) {
+            $needsRegeneration = $true
+        }
+    }
+
+    if ($needsRegeneration -and (Test-Path $envGenerator)) {
+        Write-Console "Configuration changed - regenerating Bash ENV..." -ForegroundColor Yellow
+        & $envGenerator | Out-Null
+        Write-Console "ENV file updated: .config/homelab.env" -ForegroundColor Green
+        Start-Sleep -Milliseconds 500
+    }
+}
+
 # Start Menu
 Show-MainMenu

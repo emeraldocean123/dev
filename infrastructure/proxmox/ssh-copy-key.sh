@@ -4,24 +4,24 @@
 # Script to copy unified SSH key and add to host
 #
 # DEPLOYMENT:
-#   Device: intel-1250p-proxmox-host (192.168.1.40)
+#   Device: intel-1250p-proxmox-host (192.168.1.40) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/ssh-copy-key.sh
 #
-#   Device: intel-n6005-proxmox-host (192.168.1.41)
+#   Device: intel-n6005-proxmox-host (192.168.1.41) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/ssh-copy-key.sh
 #
-#   Device: pve-proxmox-backup-server-1250p-lxc (192.168.1.52)
+#   Device: pve-proxmox-backup-server-1250p-lxc (192.168.1.52) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/ssh-copy-key.sh
 #
 #   Backup: ~/Documents/dev/sh/ssh-copy-key.sh (Windows)
 #
 # USAGE:
 #   ./ssh-copy-key.sh <source_host> <target_host>
-#   Example: ./ssh-copy-key.sh user@windows-host root@192.168.1.50
+#   Example: ./ssh-copy-key.sh user@windows-host root@192.168.1.50 # NO-LINT: IP-ALLOW (Documentation)
 
 if [ $# -ne 2 ]; then
   echo "Usage: $0 <source_host> <target_host>"
-  echo "Example: $0 user@windows-host root@192.168.1.50"
+  echo "Example: $0 user@windows-host root@192.168.1.50" # NO-LINT: IP-ALLOW (Documentation)
   exit 1
 fi
 

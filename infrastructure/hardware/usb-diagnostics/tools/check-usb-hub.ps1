@@ -44,11 +44,15 @@ if ($ethAdapter) {
 
     # Test connectivity
     Write-Console "`n=== Connectivity Test ===" -ForegroundColor Cyan
-    $ping = Test-Connection -ComputerName 192.168.1.1 -Count 4 -Quiet -ErrorAction SilentlyContinue
-    if ($ping) {
-        Write-Console "[OK] Gateway reachable" -ForegroundColor Green
+    if ($gw) {
+        $ping = Test-Connection -ComputerName $gw -Count 4 -Quiet -ErrorAction SilentlyContinue
+        if ($ping) {
+            Write-Console "[OK] Gateway reachable ($gw)" -ForegroundColor Green
+        } else {
+            Write-Console "[FAIL] Cannot reach gateway ($gw)" -ForegroundColor Red
+        }
     } else {
-        Write-Console "[FAIL] Cannot reach gateway" -ForegroundColor Red
+        Write-Console "[WARNING] No gateway configured" -ForegroundColor Yellow
     }
 } else {
     Write-Console "No Ethernet adapter found" -ForegroundColor Yellow

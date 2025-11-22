@@ -5,7 +5,7 @@
 # Changes destination from /volume1/pbs-backup/ to /volume1/backup-proxmox-backup-server/
 #
 # DEPLOYMENT:
-#   Device: intel-n6005-proxmox-host (192.168.1.41) - TARGET DEVICE
+#   Device: intel-n6005-proxmox-host (192.168.1.41) - TARGET DEVICE # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/update-synology-share-name.sh
 #   Backup: ~/Documents/dev/sh/update-synology-share-name.sh (Windows)
 #

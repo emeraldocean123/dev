@@ -5,7 +5,7 @@
 # Runs automatically on every boot via systemd service
 #
 # DEPLOYMENT:
-#   Device: intel-n6005-proxmox-host (192.168.1.41)
+#   Device: intel-n6005-proxmox-host (192.168.1.41) # NO-LINT: IP-ALLOW (Documentation)
 #   Path:   /root/sh/set-rtc-alarm-on-boot.sh
 #   Service: /etc/systemd/system/rtc-alarm-on-boot.service
 #   Backup: ~/Documents/dev/sh/set-rtc-alarm-on-boot.sh (Windows)
