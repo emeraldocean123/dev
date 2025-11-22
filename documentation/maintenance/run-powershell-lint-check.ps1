@@ -58,17 +58,13 @@ $criticalScripts = @(
     # Homelab menu
     "homelab.ps1"
 
-    # Infrastructure scripts
-    "infrastructure\hardware\check-caldigit.ps1"
-    "infrastructure\network\wake-on-lan.ps1"
-    "infrastructure\storage\drive-management\set-drive-letters.ps1"
-
     # Shell management
     "shell-management\shell-backup\backup-configs-to-cloud.ps1"
 
     # Documentation maintenance
     "documentation\maintenance\audit-dev-folder-comprehensive.ps1"
     "documentation\maintenance\cleanup-dev-folder.ps1"
+    "documentation\maintenance\run-powershell-lint-check.ps1"
 )
 
 if ($All) {

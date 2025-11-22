@@ -3,6 +3,9 @@
 # Location: shell-management/shell-backup/backup-configs-to-cloud.ps1
 # Usage: ./backup-configs-to-cloud.ps1 [-WhatIf]
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification='Interactive script requires colored console output')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Justification='Global config is shared design pattern across scripts')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseBOMForUnicodeEncodedFile', '', Justification='UTF-8 without BOM is standard for cross-platform compatibility')]
 [CmdletBinding(SupportsShouldProcess=$true)]
 param()
 

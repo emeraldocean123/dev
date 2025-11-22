@@ -2,6 +2,11 @@
 # Master interface for all homelab scripts and tools
 # Location: homelab.ps1
 
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification='Interactive CLI menu requires colored console output')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Justification='Global config is shared design pattern across scripts')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseBOMForUnicodeEncodedFile', '', Justification='UTF-8 without BOM is standard for cross-platform compatibility')]
+param()
+
 # Import shared utilities
 $libPath = Join-Path $PSScriptRoot "lib\Utils.ps1"
 if (Test-Path $libPath) {
@@ -137,7 +142,10 @@ function Show-ScriptsMenu {
             if ($commentLine -match '^#\s*(.+)') {
                 $description = " - $($Matches[1])"
             }
-        } catch {}
+        } catch {
+            # Silently continue if file cannot be read
+            Write-Debug "Could not read script description: $_"
+        }
 
         # Color code based on type
         $color = "Green" # Default PS1
@@ -201,9 +209,9 @@ function Show-ScriptsMenu {
 # Main menu loop
 do {
     Show-MainMenu
-    $input = Read-Host "Select category"
+    $userChoice = Read-Host "Select category"
 
-    switch ($input) {
+    switch ($userChoice) {
         '1' { Show-ScriptsMenu -Title "MEDIA TOOLS (Universal)" -Path "$devRoot\media\tools" }
         '2' { Show-ScriptsMenu -Title "MEDIA SERVICES (Server)" -Path "$devRoot\media\services" }
         '3' { Show-ScriptsMenu -Title "MEDIA CLIENTS (Apps)" -Path "$devRoot\media\clients" }
@@ -235,7 +243,7 @@ do {
             exit
         }
         default {
-            if ($input -ne '') {
+            if ($userChoice -ne '') {
                 Write-Console "Invalid selection." -ForegroundColor Red
                 Start-Sleep -Seconds 1
             }
