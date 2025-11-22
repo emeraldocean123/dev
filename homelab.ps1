@@ -187,7 +187,8 @@ function Show-ScriptsMenu {
                 python $targetScript
             } elseif ($ext -eq ".sh") {
                 # Convert Windows path to Unix format for Git Bash
-                $unixPath = $targetScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+                # Example: C:\Users\... -> /c/Users/...
+                $unixPath = $targetScript.Replace('\', '/') -replace '^([A-Z]):', { '/'+$_.Groups[1].Value.ToLower() }
                 bash $unixPath
             } else {
                 & $targetScript
