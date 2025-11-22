@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Homelab Management Menu - Unified Launcher
 .DESCRIPTION
@@ -37,36 +37,47 @@ function Invoke-Script {
     $fileName = [System.IO.Path]::GetFileName($ScriptPath)
 
     Write-Host "Running: $fileName" -ForegroundColor Yellow
-    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor DarkGray
+    Write-Host "======================================================" -ForegroundColor DarkGray
 
     if ($extension -eq ".ps1") {
-        # Run PowerShell script
-        & $ScriptPath
+        # Run PowerShell script from dev root
+        Push-Location $devRoot
+        try {
+            & $ScriptPath
+        } finally {
+            Pop-Location
+        }
     }
     elseif ($extension -eq ".py") {
-        # Run Python script
-        python $ScriptPath
+        # Run Python script from dev root
+        Push-Location $devRoot
+        try {
+            python $ScriptPath
+        } finally {
+            Pop-Location
+        }
     }
     elseif ($extension -eq ".sh") {
-        # Run Bash script via WSL
+        # Run Bash script via WSL from dev root
         # 1. Convert line endings to LF (just in case)
         $content = Get-Content $ScriptPath -Raw
         if ($content -match "`r`n") {
             $content -replace "`r`n","`n" | Set-Content -Path $ScriptPath -NoNewline -Encoding UTF8
         }
 
-        # 2. Convert Windows Path to WSL Path
+        # 2. Convert paths to WSL format
         $wslScriptPath = Get-WslPath -WindowsPath $ScriptPath
+        $wslDevRoot = Get-WslPath -WindowsPath $devRoot
 
-        # 3. Execute in WSL
-        wsl -e bash "$wslScriptPath"
+        # 3. Execute in WSL from dev root directory
+        wsl bash -c "cd '$wslDevRoot' && bash '$wslScriptPath'"
     }
     else {
         Write-Host "Unknown file type: $extension" -ForegroundColor Red
     }
 
     Write-Host ""
-    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor DarkGray
+    Write-Host "======================================================" -ForegroundColor DarkGray
     Write-Host "Execution Complete." -ForegroundColor Green
     Read-Host "Press any key to continue..."
 }
@@ -108,7 +119,7 @@ function Show-SubMenu {
         }
 
         Write-Host "  B. Back to main menu" -ForegroundColor Yellow
-        Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
+        Write-Host "======================================================" -ForegroundColor Cyan
 
         $selection = Read-Host "Select script to run (number or 'B' to back)"
 
@@ -138,7 +149,7 @@ function Show-MainMenu {
         }
 
         Write-Host "  Q. Quit" -ForegroundColor Yellow
-        Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
+        Write-Host "======================================================" -ForegroundColor Cyan
 
         $selection = Read-Host "Select category"
 

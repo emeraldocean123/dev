@@ -17,7 +17,7 @@ if (Test-Path $libPath) {
 }
 
 
-$devPath = $devRoot.Path
+$devPath = $devRoot
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 Write-Console "=== Dev Folder Cleanup ===" -ForegroundColor Cyan
@@ -109,10 +109,15 @@ foreach ($file in $recentReports) {
     }
 }
 
-## 3. Delete files without extensions
+## 3. Delete files without extensions (excluding standard files)
 Write-Console "`n3. Removing files without extensions..." -ForegroundColor Yellow
 
-$noExtFiles = Get-ChildItem -Path $devPath -Recurse -File | Where-Object { $_.Extension -eq '' }
+# Standard files that legitimately have no extension
+$excludeNames = @('LICENSE', 'README', 'Makefile', 'Dockerfile', 'Jenkinsfile', 'Vagrantfile', 'Gemfile', 'Procfile')
+
+$noExtFiles = Get-ChildItem -Path $devPath -Recurse -File | Where-Object {
+    $_.Extension -eq '' -and $_.Name -notin $excludeNames
+}
 
 foreach ($file in $noExtFiles) {
     Write-Console "  DELETE: $($file.FullName)" -ForegroundColor Red

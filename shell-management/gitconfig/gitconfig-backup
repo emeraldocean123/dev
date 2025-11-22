@@ -1,7 +1,0 @@
-[user]
-	name = emeraldocean123
-	email = emeraldocean123@users.noreply.github.com
-[core]
-	autocrlf = input
-[init]
-	defaultBranch = main

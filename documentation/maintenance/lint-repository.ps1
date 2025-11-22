@@ -2,6 +2,10 @@
 # Checks for: Hardcoded paths, Mixed Line Endings, Trailing Whitespace, BOM issues
 # Location: documentation/maintenance/lint-repository.ps1
 
+
+# Import shared utilities
+$libPath = Join-Path $PSScriptRoot "..\..\lib\Utils.ps1"
+if (Test-Path $libPath) { . $libPath } else { Write-Host "WARNING: Utils not found at $libPath" -ForegroundColor Yellow }
 $devRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
 $issues = 0
 $hardcodedPaths = @()
@@ -130,3 +134,4 @@ if ($issues -eq 0) {
     Write-Host "  - Empty directories: $($emptyDirs.Count)" -ForegroundColor $(if ($emptyDirs.Count -gt 0) { "DarkGray" } else { "Gray" })
 }
 Write-Host ""
+

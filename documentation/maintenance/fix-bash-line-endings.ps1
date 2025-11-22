@@ -2,6 +2,10 @@
 # Converts all .sh files from CRLF to LF for Linux compatibility
 # Location: documentation/maintenance/fix-bash-line-endings.ps1
 
+
+# Import shared utilities
+$libPath = Join-Path $PSScriptRoot "..\..\lib\Utils.ps1"
+if (Test-Path $libPath) { . $libPath } else { Write-Host "WARNING: Utils not found at $libPath" -ForegroundColor Yellow }
 $devRoot = Get-Location
 $fixed = 0
 $skipped = 0
@@ -47,3 +51,4 @@ Write-Host "Fixed: $fixed files" -ForegroundColor Green
 Write-Host "Already OK: $skipped files" -ForegroundColor Gray
 Write-Host "`nAll bash scripts are now Linux-compatible!" -ForegroundColor Green
 Write-Host ""
+

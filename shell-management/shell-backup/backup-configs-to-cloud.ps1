@@ -3,6 +3,10 @@
 # Location: shell-management/shell-backup/backup-configs-to-cloud.ps1
 # Usage: ./backup-configs-to-cloud.ps1 [-WhatIf]
 
+
+# Import shared utilities
+$libPath = Join-Path $PSScriptRoot "..\..\lib\Utils.ps1"
+if (Test-Path $libPath) { . $libPath } else { Write-Host "WARNING: Utils not found at $libPath" -ForegroundColor Yellow }
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification='Interactive script requires colored console output')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Justification='Global config is shared design pattern across scripts')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseBOMForUnicodeEncodedFile', '', Justification='UTF-8 without BOM is standard for cross-platform compatibility')]
@@ -148,3 +152,4 @@ if ($failed -eq 0) {
     Write-Host "✗ Cloud backup completed with errors" -ForegroundColor Yellow
     exit 1
 }
+

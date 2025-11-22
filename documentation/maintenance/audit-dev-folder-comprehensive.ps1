@@ -17,7 +17,7 @@ if (Test-Path $libPath) {
 }
 
 
-$devPath = $devRoot.Path
+$devPath = $devRoot
 $reportPath = Join-Path $devRoot "documentation\audits\dev-folder-audit-$(Get-Date -Format 'yyyy-MM-dd').md"
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 

@@ -3,6 +3,10 @@
 # Location: shell-management/utils/setup-homelab-config.ps1
 # Usage: ./setup-homelab-config.ps1
 
+
+# Import shared utilities
+$libPath = Join-Path $PSScriptRoot "..\..\lib\Utils.ps1"
+if (Test-Path $libPath) { . $libPath } else { Write-Host "WARNING: Utils not found at $libPath" -ForegroundColor Yellow }
 param(
     [switch]$Force
 )
@@ -48,3 +52,4 @@ if (Test-Path $exampleFile) {
     Write-Host "This file should exist in the repository. Please check your git clone." -ForegroundColor Yellow
     exit 1
 }
+

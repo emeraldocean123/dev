@@ -4,6 +4,10 @@
 #
 # Copy these menu entries into your main homelab.ps1 file
 
+
+# Import shared utilities
+$libPath = Join-Path $PSScriptRoot "..\..\lib\Utils.ps1"
+if (Test-Path $libPath) { . $libPath } else { Write-Host "WARNING: Utils not found at $libPath" -ForegroundColor Yellow }
 function Show-MediaManagerMenu {
     Clear-Host
     Write-Host "`n========================================" -ForegroundColor Cyan
@@ -251,3 +255,4 @@ Add these to your main homelab.ps1 menu:
 if ($MyInvocation.InvocationName -ne '.') {
     Show-MediaManagerMenu
 }
+

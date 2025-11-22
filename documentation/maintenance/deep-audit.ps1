@@ -20,7 +20,8 @@ foreach ($file in $files) {
     $relPath = $file.FullName.Replace($devRoot.Path + "\", "").Replace("\", "/")
 
     # --- Check A: Stale Location Headers ---
-    if ($content -match '# Location: (.+)') {
+    # Only match actual location headers (at start of line, not in comments/strings)
+    if ($content -match '(?m)^# Location: (.+)$') {
         $claimedLoc = $Matches[1].Trim()
         $normClaim = $claimedLoc.Replace("\", "/")
         $normClaimClean = $normClaim -replace "^~/", "" -replace "^dev/", ""
@@ -32,8 +33,8 @@ foreach ($file in $files) {
         }
     }
 
-    # --- Check B: References to Dead Folders (excluding documentation files) ---
-    if ($file.Extension -ne ".md") {
+    # --- Check B: References to Dead Folders (excluding documentation files and this script) ---
+    if ($file.Extension -ne ".md" -and $file.Name -ne "deep-audit.ps1") {
         foreach ($bad in $forbiddenPaths) {
             if ($content -match $bad) {
                 # Look for path-like structures
