@@ -130,6 +130,21 @@
                     "description": "Path in cloud storage for config backups"
                 }
             }
+        },
+        "Secrets": {
+            "type": "object",
+            "description": "Application secrets and API keys (never commit actual values)",
+            "properties": {
+                "ImmichApiKey": {
+                    "type": "string",
+                    "description": "API key for Immich server authentication"
+                },
+                "ImmichServerUrl": {
+                    "type": "string",
+                    "pattern": "^https?://.*",
+                    "description": "Immich server URL (e.g., http://localhost:2283)"
+                }
+            }
         }
     },
     "definitions": {

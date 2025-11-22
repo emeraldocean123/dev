@@ -11,14 +11,46 @@ if (Test-Path $libPath) {
 
 # Import Mylio Photos to Immich using immich-go
 # This script imports all photos from D:\Mylio into Immich
+#
+# CONFIGURATION:
+#   Source: .config/homelab.settings.json
+#   Required Fields:
+#     - Secrets.ImmichServerUrl  (Immich server URL)
+#     - Secrets.ImmichApiKey     (Immich API key)
+#     - Paths.MylioCatalog       (Source photo directory)
 
 Write-Console "Immich-Go Photo Import" -ForegroundColor Cyan
 Write-Console "======================" -ForegroundColor Cyan
 Write-Console ""
 
-$IMMICH_SERVER = "http://localhost:2283"
-$IMMICH_API_KEY = "lUPftoG12Gczf3ZjvHRYstoY7RrZWkTzULLbewSUAA"
-$PHOTO_PATH = "D:\Mylio"
+# Load configuration from homelab.settings.json
+$configPath = Join-Path $PSScriptRoot "../../../.config/homelab.settings.json"
+
+if (-not (Test-Path $configPath)) {
+    Write-Console "ERROR: Config file not found at $configPath" -ForegroundColor Red
+    Write-Console "       Please ensure .config/homelab.settings.json exists" -ForegroundColor Yellow
+    exit 1
+}
+
+try {
+    $config = Get-Content $configPath -Raw | ConvertFrom-Json
+
+    # Load values from config
+    $IMMICH_SERVER  = $config.Secrets.ImmichServerUrl
+    $IMMICH_API_KEY = $config.Secrets.ImmichApiKey
+    $PHOTO_PATH     = $config.Paths.MylioCatalog
+
+    # Validate that required values were loaded
+    if (-not $IMMICH_SERVER -or -not $IMMICH_API_KEY -or -not $PHOTO_PATH) {
+        Write-Console "ERROR: Missing required configuration values" -ForegroundColor Red
+        Write-Console "       Check Secrets.ImmichServerUrl, Secrets.ImmichApiKey, and Paths.MylioCatalog" -ForegroundColor Yellow
+        exit 1
+    }
+}
+catch {
+    Write-Console "ERROR: Failed to load config: $_" -ForegroundColor Red
+    exit 1
+}
 
 # Check if Mylio folder exists
 if (-not (Test-Path $PHOTO_PATH)) {
