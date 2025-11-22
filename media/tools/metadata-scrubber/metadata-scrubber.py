@@ -2,7 +2,7 @@
 """
 Metadata Scrubber Pro
 =====================
-Version: 2.8.0
+Version: 3.0.0
 
 Description:
     Removes 3rd-party metadata (Lightroom edits, PII) while preserving
@@ -12,10 +12,11 @@ Description:
     Videos: Removes XMP. Keeps QuickTime (GPS/Date).
 
 Usage:
-    python scrub-metadata.py "C:/Photos"
-    python scrub-metadata.py --help
+    python metadata-scrubber.py "C:/Photos"
+    python metadata-scrubber.py --help
 
 Changelog:
+    v3.0.0 - Code unification: Refactored to use media_common.py shared library (~135 lines removed)
     v2.8.0 - Scrub mode selection: Choose embedded metadata, XMP sidecars, or both (wizard + CLI)
     v2.7.0 - XMP sidecar support: Added .xmp to supported extensions, clearer unsupported message
     v2.6.0 - Unsupported format handling: MPEG/AVI/M2TS/WMV/WebM shown as "unsupported" not "error"
@@ -38,38 +39,38 @@ import subprocess
 import multiprocessing as mp
 import logging
 import json
+import re
 from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import List, Tuple
 import argparse
 
+# Import shared library
 try:
-    from tqdm import tqdm
-    from colorama import init, Fore, Style
-    init(autoreset=True)
-except ImportError:
-    print("ERROR: Missing dependencies. Run: pip install tqdm colorama")
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from lib.media_common import (
+        PHOTO_EXTENSIONS, VIDEO_EXTENSIONS, FILETYPE_TO_EXT, SKIP_DIRS,
+        WORKER_PROFILES, get_optimal_workers, setup_logging,
+        print_phase, print_success, print_error, print_warning, print_info,
+        check_exiftool
+    )
+    try:
+        from tqdm import tqdm
+    except ImportError:
+        print("ERROR: Missing tqdm. Run: pip install tqdm")
+        sys.exit(1)
+except ImportError as e:
+    print(f"ERROR: Could not import dependencies: {e}")
+    print(f"Make sure media_common.py is in: {Path(__file__).parent.parent / 'lib'}")
     sys.exit(1)
 
-__version__ = "2.8.0"
+__version__ = "3.0.0"
 
 
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-
-# Supported file extensions
-PHOTO_EXTENSIONS = {
-    '.jpg', '.jpeg', '.png', '.tiff', '.tif', '.heic', '.heif',
-    '.dng', '.cr2', '.cr3', '.nef', '.arw', '.orf', '.rw2', '.raw',
-    '.avif', '.webp', '.jxl',
-    '.xmp'  # XMP sidecar files (can be scrubbed like photos)
-}
-VIDEO_EXTENSIONS = {
-    '.mp4', '.mov', '.avi', '.mkv', '.m4v', '.mpg', '.mpeg',
-    '.wmv', '.flv', '.webm', '.3gp', '.mts', '.m2ts', '.hevc', '.ts'
-}
 
 # ExifTool FileType values for categorization
 VIDEO_FILETYPES = {'MOV', 'MP4', 'AVI', 'MKV', 'M4V', 'WEBM', 'MTS', 'M2TS', '3GP', 'MPG', 'MPEG', 'HEVC', 'TS', 'WMV', 'FLV'}
@@ -78,33 +79,6 @@ PHOTO_FILETYPES = {'JPEG', 'PNG', 'HEIC', 'HEIF', 'TIFF', 'WEBP', 'AVIF', 'JXL',
 # Video formats ExifTool cannot write to (metadata only via XMP sidecar)
 UNSUPPORTED_VIDEO_FILETYPES = {'MPEG', 'AVI', 'M2TS', 'WMV', 'WEBM', 'FLV'}
 UNSUPPORTED_VIDEO_EXTENSIONS = {'.mpeg', '.mpg', '.avi', '.m2ts', '.mts', '.wmv', '.webm', '.flv'}
-
-# ExifTool FileType to correct extension mapping (for renaming)
-FILETYPE_TO_EXT = {
-    'JPEG': '.jpg', 'PNG': '.png', 'HEIC': '.heic', 'HEIF': '.heif',
-    'TIFF': '.tiff', 'WEBP': '.webp', 'AVIF': '.avif', 'JXL': '.jxl',
-    'GIF': '.gif', 'BMP': '.bmp', 'XMP': '.xmp',
-    'CR2': '.cr2', 'CR3': '.cr3', 'NEF': '.nef', 'ARW': '.arw',
-    'ORF': '.orf', 'DNG': '.dng', 'RW2': '.rw2', 'RAF': '.raf', 'SRW': '.srw', 'RAW': '.raw',
-    'MOV': '.mov', 'MP4': '.mp4', 'AVI': '.avi', 'MKV': '.mkv', 'M4V': '.m4v',
-    'WEBM': '.webm', 'MTS': '.mts', 'M2TS': '.m2ts', '3GP': '.3gp',
-    'MPG': '.mpg', 'MPEG': '.mpeg', 'HEVC': '.hevc', 'TS': '.ts', 'WMV': '.wmv', 'FLV': '.flv',
-}
-
-# Folder exclusions (OOM Protection)
-SKIP_DIRS = {
-    '.git', 'node_modules', 'venv', '.venv', '__pycache__', '.idea', '.vscode',
-    'AppData', 'Library', '.npm', '.cache', 'Cache', 'Caches', '.gradle',
-    'target', 'build', 'dist', '.tox', '.mypy_cache', '.pytest_cache'
-}
-
-# Worker profiles
-WORKER_PROFILES = {
-    'conservative': {'workers': 2, 'desc': 'Low CPU usage (2 workers)'},
-    'balanced': {'workers': max(4, mp.cpu_count() // 2), 'desc': f'Balanced ({max(4, mp.cpu_count() // 2)} workers)'},
-    'fast': {'workers': max(1, mp.cpu_count() - 2), 'desc': f'Fast ({max(1, mp.cpu_count() - 2)} workers)'},
-    'maximum': {'workers': mp.cpu_count(), 'desc': f'Maximum ({mp.cpu_count()} workers)'},
-}
 
 # Global flags
 _shutdown_requested = False
@@ -115,33 +89,16 @@ _quiet_mode = False
 # =============================================================================
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
-log_dir = SCRIPT_DIR / "logs"
-log_dir.mkdir(exist_ok=True)
 config_dir = SCRIPT_DIR / "configs"
 config_dir.mkdir(exist_ok=True)
 
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = log_dir / f"scrubber_{timestamp}.log"
-
-class FlushingFileHandler(logging.FileHandler):
-    """File handler that flushes after every write."""
-    def emit(self, record):
-        super().emit(record)
-        self.flush()
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s | %(levelname)-7s | %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-    handlers=[
-        FlushingFileHandler(log_file, encoding="utf-8", mode='w'),
-        logging.StreamHandler()
-    ]
-)
+# Use media_common setup_logging
+log_file = setup_logging("scrubber", SCRIPT_DIR / "logs")
 log = logging.getLogger()
 
-def save_configuration(source: str, target: str, workers: int, dry_run: bool, keep_backups: bool) -> str:
+def save_configuration(source: str, target: str, workers: int, dry_run: bool, keep_backups: bool, scrub_mode: str, fix_extensions: bool) -> str:
     """Save run configuration to JSON file."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     config = {
         "timestamp": datetime.now().isoformat(),
         "version": __version__,
@@ -151,6 +108,8 @@ def save_configuration(source: str, target: str, workers: int, dry_run: bool, ke
         "workers": workers,
         "dry_run": dry_run,
         "keep_backups": keep_backups,
+        "scrub_mode": scrub_mode,
+        "fix_extensions": fix_extensions,
         "cpu_cores": mp.cpu_count()
     }
     config_filename = f"scrubber_{timestamp}.json"
@@ -169,35 +128,9 @@ def signal_handler(signum, frame):
     if not _shutdown_requested:
         _shutdown_requested = True
         if not _quiet_mode:
-            print(f"\n\n{Fore.YELLOW}Stopping... Finishing current batches (Ctrl+C again to force){Style.RESET_ALL}")
+            print_warning("\nStopping... Finishing current batches (Ctrl+C again to force)")
     else:
         sys.exit(1)
-
-def print_phase(phase: str, message: str = ""):
-    if _quiet_mode: return
-    print(f"\n{Fore.CYAN}{'='*70}{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}{Style.BRIGHT}  {phase}{Style.RESET_ALL}")
-    if message: print(f"{Fore.WHITE}  {message}{Style.RESET_ALL}")
-    print(f"{Fore.CYAN}{'='*70}{Style.RESET_ALL}\n")
-
-def print_success(msg):
-    if not _quiet_mode: print(f"{Fore.GREEN}  {msg}{Style.RESET_ALL}")
-
-def print_error(msg):
-    if not _quiet_mode: print(f"{Fore.RED}  {msg}{Style.RESET_ALL}")
-
-def print_warning(msg):
-    if not _quiet_mode: print(f"{Fore.YELLOW}  {msg}{Style.RESET_ALL}")
-
-def print_info(msg):
-    if not _quiet_mode: print(f"{Fore.BLUE}  {msg}{Style.RESET_ALL}")
-
-def get_optimal_workers() -> int:
-    """Auto-detect optimal worker count based on CPU cores."""
-    cores = mp.cpu_count()
-    if cores <= 4:
-        return max(1, cores - 1)
-    return max(2, cores - 2)
 
 
 # =============================================================================
@@ -229,14 +162,16 @@ def find_media_files(directory: str, scrub_mode: str = 'both') -> Tuple[List[Pat
         target_photo_ext = PHOTO_EXTENSIONS - {'.xmp'}
         target_video_ext = VIDEO_EXTENSIONS
     else:  # 'both'
-        target_photo_ext = PHOTO_EXTENSIONS
+        # Add .xmp to photo extensions for unified handling
+        target_photo_ext = PHOTO_EXTENSIONS | {'.xmp'}
         target_video_ext = VIDEO_EXTENSIONS
 
     with tqdm(desc="  Scanning", unit=" files", disable=_quiet_mode,
               bar_format='{desc}: {n_fmt} found') as pbar:
 
         for root, dirs, files in os.walk(base_path):
-            if _shutdown_requested: break
+            if _shutdown_requested:
+                break
 
             # Prune junk directories in-place (OOM protection)
             dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith('.')]
@@ -268,7 +203,8 @@ def copy_files(files: List[Path], source: Path, target: Path):
 
     with tqdm(total=len(files), desc="  Copying", unit=" file", disable=_quiet_mode) as pbar:
         for f in files:
-            if _shutdown_requested: break
+            if _shutdown_requested:
+                break
 
             rel_path = f.relative_to(source)
             dest = target / rel_path
@@ -279,7 +215,6 @@ def copy_files(files: List[Path], source: Path, target: Path):
 
 def parse_exiftool_count(output: str, pattern: str) -> int:
     """Parse count from ExifTool output like '5 image files updated'."""
-    import re
     match = re.search(rf'(\d+)\s+{pattern}', output)
     return int(match.group(1)) if match else 0
 
@@ -297,7 +232,6 @@ def detect_file_types(files: List[Path]) -> dict:
         result = subprocess.run(cmd, capture_output=True, text=True,
                                timeout=120, encoding='utf-8', errors='replace')
         if result.returncode == 0 and result.stdout:
-            import json
             data = json.loads(result.stdout)
             return {Path(item.get('SourceFile', '')): item.get('FileType', '') for item in data}
     except Exception:
@@ -347,20 +281,12 @@ def scrub_batch(files: List[Path], is_video: bool, dry_run: bool, keep_backups: 
                 actual_videos.append(f)
                 # Log type correction to file only (prevents tqdm staircase)
                 if not is_video:
-                    msg = f"Type fix: {f.name} has photo ext but is {actual_type}, processing as video"
-                    for h in log.handlers:
-                        if isinstance(h, FlushingFileHandler):
-                            record = logging.LogRecord('root', logging.INFO, '', 0, msg, (), None)
-                            h.handle(record)
+                    logging.info(f"Type fix: {f.name} has photo ext but is {actual_type}, processing as video")
             elif actual_type in PHOTO_FILETYPES:
                 actual_photos.append(f)
                 # Log type correction to file only
                 if is_video:
-                    msg = f"Type fix: {f.name} has video ext but is {actual_type}, processing as photo"
-                    for h in log.handlers:
-                        if isinstance(h, FlushingFileHandler):
-                            record = logging.LogRecord('root', logging.INFO, '', 0, msg, (), None)
-                            h.handle(record)
+                    logging.info(f"Type fix: {f.name} has video ext but is {actual_type}, processing as photo")
             else:
                 # Unknown type - use original categorization
                 if is_video:
@@ -405,12 +331,7 @@ def scrub_batch(files: List[Path], is_video: bool, dry_run: bool, keep_backups: 
                 if old_path.exists() and not new_path.exists():
                     old_path.rename(new_path)
                     total_renamed += 1
-                    # Log to file only (prevents tqdm staircase)
-                    msg = f"Renamed: {old_path.name} → {new_path.name} ({actual_type})"
-                    for h in log.handlers:
-                        if isinstance(h, FlushingFileHandler):
-                            record = logging.LogRecord('root', logging.INFO, '', 0, msg, (), None)
-                            h.handle(record)
+                    logging.info(f"Renamed: {old_path.name} → {new_path.name} ({actual_type})")
             except Exception:
                 pass
 
@@ -429,10 +350,10 @@ def run_scrubber(source: str, target: str, workers: int, dry_run: bool = False,
     src_path = Path(source)
 
     # Save configuration and log startup
-    config_filename = save_configuration(source, target, workers, dry_run, keep_backups)
+    config_filename = save_configuration(source, target, workers, dry_run, keep_backups, scrub_mode, fix_extensions)
     log.info(f"Fix extensions: {fix_extensions}")
     log.info(f"Scrub mode: {scrub_mode}")
-    log.info(f"Log file: logs/{log_file.name}")
+    log.info(f"Log file: {log_file}")
     log.info(f"Config saved: configs/{config_filename}")
     log.info(f"Source: {source}")
     log.info(f"Target: {target or 'IN-PLACE'}")
@@ -513,24 +434,24 @@ def run_scrubber(source: str, target: str, workers: int, dry_run: bool = False,
     # Summary
     print_phase("SUMMARY")
     print(f"  Total Files:  {len(work_files):,}")
-    print(f"  {Fore.GREEN}Scrubbed:     {stats['updated']:,}{Style.RESET_ALL}")
-    print(f"  {Fore.YELLOW}Unchanged:    {stats['unchanged']:,} (already clean){Style.RESET_ALL}")
+    print_success(f"Scrubbed:     {stats['updated']:,}")
+    print_warning(f"Unchanged:    {stats['unchanged']:,} (already clean)")
     if stats['renamed'] > 0:
-        print(f"  {Fore.CYAN}Renamed:      {stats['renamed']:,} (extension fixes){Style.RESET_ALL}")
+        print_info(f"Renamed:      {stats['renamed']:,} (extension fixes)")
     if stats['unsupported'] > 0:
-        print(f"  {Fore.MAGENTA}Unsupported:  {stats['unsupported']:,} (unsupported format - use XMP sidecar){Style.RESET_ALL}")
+        print_warning(f"Unsupported:  {stats['unsupported']:,} (unsupported format - use XMP sidecar)")
         if scrub_mode == 'embedded':
-            print(f"  {Fore.MAGENTA}  Note: To scrub these files, create XMP sidecars and use 'XMP sidecars' or 'Both' mode{Style.RESET_ALL}")
+            print_info("  Note: To scrub these files, create XMP sidecars and use 'XMP sidecars' or 'Both' mode")
 
     if stats['errors'] > 0:
-        print(f"  {Fore.RED}Errors:       {stats['errors']:,}{Style.RESET_ALL}")
+        print_error(f"Errors:       {stats['errors']:,}")
         shown = min(3, len(all_errors))
         if shown > 0:
             print(f"    (showing {shown} of {stats['errors']:,} errors)")
             for e in all_errors[:3]:
                 print(f"    - {e}")
     else:
-        print(f"  {Fore.GREEN}Errors:       0{Style.RESET_ALL}")
+        print_success("Errors:       0")
 
     # Log final stats
     log.info(f"COMPLETE: {stats['updated']:,} scrubbed, {stats['unchanged']:,} unchanged, {stats['renamed']:,} renamed, {stats['unsupported']:,} unsupported, {stats['errors']:,} errors")
@@ -542,6 +463,14 @@ def run_scrubber(source: str, target: str, workers: int, dry_run: bool = False,
 
 def main_interactive():
     """Interactive wizard mode."""
+    try:
+        from colorama import Fore, Style
+    except ImportError:
+        class Fore:
+            MAGENTA = CYAN = YELLOW = WHITE = ''
+        class Style:
+            BRIGHT = RESET_ALL = ''
+
     print(f"\n{Fore.MAGENTA}{Style.BRIGHT}Metadata Scrubber Pro v{__version__}{Style.RESET_ALL}")
     print(f"{Fore.WHITE}Removes edit history & PII. Keeps EXIF & Video GPS.{Style.RESET_ALL}")
     print(f"{Fore.WHITE}Detected {mp.cpu_count()} CPU cores{Style.RESET_ALL}\n")
@@ -623,6 +552,7 @@ def main():
     parser.add_argument("--workers", type=int, help="Parallel workers")
     parser.add_argument("--quiet", action="store_true", help="Suppress output")
     parser.add_argument("--no-backups", action="store_true", help="Don't create .original files")
+    parser.add_argument("--fix-extensions", action="store_true", help="Rename files with wrong extensions")
     parser.add_argument("--scrub-mode", choices=['embedded', 'xmp', 'both'], default='both',
                         help="What to scrub: embedded (photos/videos), xmp (sidecars), both (default)")
 
@@ -632,7 +562,7 @@ def main():
     _quiet_mode = args.quiet
 
     # Check ExifTool
-    if shutil.which('exiftool') is None:
+    if not check_exiftool():
         print("ERROR: ExifTool not found in PATH.")
         sys.exit(1)
 
@@ -648,13 +578,16 @@ def main():
 
         scrub_mode = args.scrub_mode.replace('-', '_')  # Handle 'xmp' vs potential 'xmp-sidecar'
         if args.target:
-            run_scrubber(args.source, args.target, workers, args.dry_run, not args.no_backups, scrub_mode=scrub_mode)
+            run_scrubber(args.source, args.target, workers, args.dry_run, not args.no_backups,
+                        fix_extensions=args.fix_extensions, scrub_mode=scrub_mode)
         elif args.in_place:
-            run_scrubber(args.source, None, workers, args.dry_run, not args.no_backups, scrub_mode=scrub_mode)
+            run_scrubber(args.source, None, workers, args.dry_run, not args.no_backups,
+                        fix_extensions=args.fix_extensions, scrub_mode=scrub_mode)
         else:
             # Default: create 'cleaned' subfolder
             tgt = str(Path(args.source) / "cleaned")
-            run_scrubber(args.source, tgt, workers, args.dry_run, not args.no_backups, scrub_mode=scrub_mode)
+            run_scrubber(args.source, tgt, workers, args.dry_run, not args.no_backups,
+                        fix_extensions=args.fix_extensions, scrub_mode=scrub_mode)
 
 
 if __name__ == "__main__":
