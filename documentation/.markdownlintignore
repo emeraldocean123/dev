@@ -1,0 +1,7 @@
+# Auto-generated lint transcript captured verbatim (intentionally violates formatting rules).
+audits/claude-md-lint-report-2025-11-09.md
+
+# Legacy audit transcripts retained in raw form.
+audits/legacy/*.md
+# Archived session transcripts retained raw.
+reports/legacy/*.md

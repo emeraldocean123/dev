@@ -1,0 +1,86 @@
+# --- WSL Bash Configuration ---
+# Ensure user bin is prioritized
+export PATH="/home/josep/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib"
+
+# History settings
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTCONTROL=ignoreboth:erasedups  # Ignore duplicates and commands starting with space
+export HISTTIMEFORMAT="%F %T  "  # Add timestamps
+shopt -s histappend  # Append to history file, dont overwrite
+
+# Color support
+export CLICOLOR=1
+export LS_COLORS="di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+alias ls="ls --color=auto"
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+
+# Oh My Posh prompt (WSL)
+if command -v oh-my-posh >/dev/null 2>&1; then
+  eval "export POSH_SESSION_ID="d1052db0-709c-4f12-b3fb-f049213f38f7";source $'/home/josep/.cache/oh-my-posh/init.14695981039346656037.sh'"
+fi
+
+# Fastfetch banner
+if command -v fastfetch >/dev/null 2>&1; then
+  fastfetch
+fi
+
+# Git helpers (matches PowerShell/Git Bash aliases)
+alias gs="git status"
+alias ga="git add"
+alias gcom="git commit"
+alias gp="git push"
+alias gl="git --no-pager log --oneline -n 10"
+alias gd="git --no-pager diff"
+
+# Directory navigation (matches PowerShell/Git Bash aliases)
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
+# Directory listing (matches PowerShell/Git Bash aliases)
+alias ll="ls -lah"
+alias la="ls -lah"
+alias l="ls -lh"
+
+# Safety aliases
+alias rm="rm -i"
+alias cp="cp -i"
+alias mv="mv -i"
+
+# Useful functions
+# Create directory and cd into it
+mkcd() {
+    mkdir -p "" && cd ""
+}
+
+# Extract various archive formats
+extract() {
+    if [ -f "" ]; then
+        case "" in
+            *.tar.bz2)   tar xjf ""     ;;
+            *.tar.gz)    tar xzf ""     ;;
+            *.tar.xz)    tar xJf ""     ;;
+            *.bz2)       bunzip2 ""     ;;
+            *.gz)        gunzip ""      ;;
+            *.tar)       tar xf ""      ;;
+            *.tbz2)      tar xjf ""     ;;
+            *.tgz)       tar xzf ""     ;;
+            *.zip)       unzip ""       ;;
+            *.Z)         uncompress ""  ;;
+            *.7z)        7z x ""        ;;
+            *)           echo " cannot be extracted via extract()" ;;
+        esac
+    else
+        echo " is not a valid file"
+    fi
+}
+
+# Quick file search
+alias ff="find . -type f -name"
+
+# Disk usage helpers
+alias du1="du -h --max-depth=1"
+alias ducks="du -cks * | sort -rn | head"

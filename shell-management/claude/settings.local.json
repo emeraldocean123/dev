@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "Task",
+      "BashOutput",
+      "KillShell",
+      "AskUserQuestion",
+      "TodoWrite",
+      "NotebookEdit",
+      "SlashCommand",
+      "Skill"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

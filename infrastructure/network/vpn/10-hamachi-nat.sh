@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Hamachi Static Port NAT Rules
+# Enables static port NAT for Hamachi VPN clients at .100 and .101
+#
+# DEPLOYMENT:
+#   Device: unifi-ucg-fiber-router (192.168.1.1)
+#   Path:   /data/on_boot.d/10-hamachi-nat.sh
+#   Backup: ~/Documents/dev/sh/10-hamachi-nat.sh (Windows)
+#
+# EXECUTION:
+#   - Auto-runs on router boot via systemd service: hamachi-nat.service
+#   - Service file: /etc/systemd/system/hamachi-nat.service
+#   - Manual run: ssh router "/data/on_boot.d/10-hamachi-nat.sh"
+
+# Get WAN interface (usually eth4 on UCG Fiber)
+WAN_IFACE="eth4"
+WAN_IP=$(ip -4 addr show $WAN_IFACE | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+
+# Hamachi client IPs
+HAMACHI_CLIENT_1="192.168.1.100"
+HAMACHI_CLIENT_2="192.168.1.101"
+
+# Remove existing rules if they exist (for clean restart)
+iptables -t nat -D POSTROUTING -s $HAMACHI_CLIENT_1/32 -o $WAN_IFACE -j SNAT --to-source "$WAN_IP" 2>/dev/null || true
+iptables -t nat -D POSTROUTING -s $HAMACHI_CLIENT_2/32 -o $WAN_IFACE -j SNAT --to-source "$WAN_IP" 2>/dev/null || true
+
+# Add static port NAT rules (preserves source port - required for Hamachi)
+# These rules prevent port translation for outbound traffic from Hamachi clients
+iptables -t nat -A POSTROUTING -s $HAMACHI_CLIENT_1/32 -o $WAN_IFACE -j SNAT --to-source "$WAN_IP"
+iptables -t nat -A POSTROUTING -s $HAMACHI_CLIENT_2/32 -o $WAN_IFACE -j SNAT --to-source "$WAN_IP"
+
+# Log the configuration
+logger -t hamachi-nat "Static port NAT enabled for Hamachi clients: $HAMACHI_CLIENT_1, $HAMACHI_CLIENT_2 via $WAN_IFACE ($WAN_IP)"
+
+exit 0

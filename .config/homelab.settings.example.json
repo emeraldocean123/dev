@@ -1,0 +1,120 @@
+{
+    "$schema": "./homelab.settings.schema.json",
+    "_comment": "Template for homelab.settings.json - Copy to homelab.settings.json and fill with your actual values",
+    "Owner": "YourName",
+    "Network": {
+        "Subnet": "192.168.1.0/24",
+        "Gateway": "192.168.1.1",
+        "Hosts": {
+            "Primary": {
+                "Name": "proxmox-primary",
+                "IP": "192.168.1.40",
+                "User": "root",
+                "Mac": "00:00:00:00:00:00",
+                "Role": "Primary Proxmox VE host",
+                "ScriptPath": "/root/sh/"
+            },
+            "Secondary": {
+                "Name": "proxmox-backup",
+                "IP": "192.168.1.41",
+                "User": "root",
+                "Mac": "00:00:00:00:00:00",
+                "Role": "Backup Server",
+                "ScriptPath": "/root/sh/"
+            },
+            "NAS": {
+                "Name": "nas",
+                "IP": "192.168.1.10",
+                "User": "admin",
+                "Mac": "00:00:00:00:00:00",
+                "Role": "Network Attached Storage"
+            },
+            "Router": {
+                "Name": "router",
+                "IP": "192.168.1.1",
+                "User": "admin",
+                "Model": "Your Router Model"
+            },
+            "Switch": {
+                "Name": "switch",
+                "IP": "192.168.1.2",
+                "User": "admin",
+                "Model": "Your Switch Model"
+            },
+            "PDU": {
+                "Name": "pdu",
+                "IP": "192.168.1.3",
+                "User": "admin",
+                "Model": "Your PDU Model"
+            },
+            "KVM": {
+                "Name": "kvm",
+                "IP": "192.168.1.4",
+                "User": "root",
+                "Model": "Your KVM Model"
+            }
+        },
+        "Containers": {
+            "Docker": {
+                "ID": 1000,
+                "IP": "192.168.1.50",
+                "Role": "Docker Services"
+            },
+            "Immich": {
+                "ID": 1001,
+                "IP": "192.168.1.51",
+                "Role": "Photo Management"
+            },
+            "PBS": {
+                "ID": 1002,
+                "IP": "192.168.1.52",
+                "Role": "Proxmox Backup Server"
+            },
+            "Syncthing": {
+                "ID": 1003,
+                "IP": "192.168.1.53",
+                "Role": "File Sync"
+            },
+            "Tailscale": {
+                "ID": 1004,
+                "IP": "192.168.1.54",
+                "Role": "VPN"
+            }
+        }
+    },
+    "Paths": {
+        "DevRoot": "C:\\path\\to\\your\\dev\\folder",
+        "MylioCatalog": "D:\\Path\\To\\Mylio",
+        "ImmichLibrary": "D:\\Path\\To\\Immich\\library",
+        "MediaWorkspace": "D:\\Path\\To\\Media\\Workspace",
+        "ProxmoxScriptRoot": "/root/sh/"
+    },
+    "SSH": {
+        "KeyFile": "~/.ssh/id_ed25519",
+        "ConfigFile": "~/.ssh/config"
+    },
+    "Backup": {
+        "Layer1": {
+            "Host": "proxmox-primary",
+            "Service": "PBS",
+            "Dataset": "rpool/backup-dataset",
+            "Schedule": "Daily 2:00 AM"
+        },
+        "Layer2": {
+            "Host": "proxmox-backup",
+            "Dataset": "rpool/replicated-backup",
+            "Method": "ZFS send/receive",
+            "Schedule": "Daily 3:00 AM"
+        },
+        "Layer3": {
+            "Host": "nas",
+            "Path": "/volume1/backup",
+            "Method": "rsync",
+            "Trigger": "Auto-detect"
+        }
+    },
+    "Cloud": {
+        "RcloneRemote": "your-rclone-remote-name",
+        "ConfigBackupPath": "backups/homelab-configs"
+    }
+}

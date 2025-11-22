@@ -1,0 +1,69 @@
+# Logs and reports
+*.log
+*.txt
+*-report-*.txt
+*-report-*.log
+*-output-*.txt
+*-output-*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+
+# Personal/sensitive data
+*.env
+.env.*
+**/credentials.json
+**/secrets.json
+**/*-private.*
+
+# Configuration (protect real settings, allow templates)
+.config/homelab.settings.json
+infrastructure/network/config/servers.env
+!infrastructure/network/config/servers.env.example
+media/tools/**/configs/*.json
+!media/tools/**/configs/*.example.json
+!.config/homelab.settings.example.json
+
+# Generated reports (user-specific data)
+documentation/reports/health-report-*.md
+!documentation/reports/README.md
+
+# Archive exceptions (we want to keep archive folders but ignore their contents)
+# Uncomment if you want to exclude archive contents:
+# **/archive/*.log
+# **/archive/*.txt
+
+# Exception: Keep important documentation logs
+!documentation/audits/*.md
+!documentation/audits/archive/*.md
+
+# Exception: Keep README files
+!**/README.md
+!README.md
+
+# Backup files
+*.bak
+*.backup
+*-backup.*
+
+# System files
+*.lnk
+.claude/

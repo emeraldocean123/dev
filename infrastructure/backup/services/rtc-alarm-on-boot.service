@@ -1,0 +1,12 @@
+[Unit]
+Description=Set RTC Wake Alarm on Boot
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/sh/set-rtc-alarm-on-boot.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
