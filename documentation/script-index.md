@@ -2,7 +2,7 @@
 
 Automatically generated script inventory. Last updated: November 22, 2025
 
-**Total Scripts:** 137
+**Total Scripts:** 125
 **Total Categories:** 49
 
 ---
@@ -71,21 +71,13 @@ Automatically generated script inventory. Last updated: November 22, 2025
 - **check-boot-time.ps1** - Get system boot time and check for errors around boot
 - **enable-bluetooth-radio.ps1** - Enable Bluetooth Radio
 
-## infrastructure/hardware/usb-diagnostics (6 scripts)
+## infrastructure/hardware/usb-diagnostics (1 scripts)
 
-- **check-firmware-version.ps1** - Check CalDigit TS5+ Current Firmware Version
-- **check-pnp-details.ps1** - Import shared utilities
-- **check-pnp-devices.ps1** - Import shared utilities
-- **check-usb-event-logs.ps1** - USB Event Log and Device Information Check
-- **check-usb-hub.ps1** - USB Hub Diagnostic Script
-- **check-usb4-firmware.ps1** - Import shared utilities
+- **Invoke-UsbDiagnostics.ps1** - USB Diagnostics Menu Launcher
 
-## infrastructure/network/adapter-priority (4 scripts)
+## infrastructure/network/adapter-priority (1 scripts)
 
 - **manage-network-priority.ps1** - Manage network adapter priorities.
-- **set-ethernet-priority.ps1** - Set Ethernet as Primary Network Adapter
-- **set-wifi-priority.ps1** - Set WiFi as Primary Network Adapter
-- **toggle-network-priority.ps1** - Toggle Network Priority Script
 
 ## infrastructure/network/diagnostics (2 scripts)
 
@@ -110,12 +102,9 @@ Automatically generated script inventory. Last updated: November 22, 2025
 
 - **wake-servers.ps1** - Wake-on-LAN Script for Network Infrastructure
 
-## infrastructure/network/wifi (4 scripts)
+## infrastructure/network/wifi (1 scripts)
 
-- **check-wifi-block.ps1** - Check what might be preventing WiFi from being disabled
-- **check-wifi-status.ps1** - Check WiFi and Ethernet status
-- **disable-wifi-netsh.ps1** - Disable WiFi using netsh (alternative method)
-- **disable-wifi.ps1** - Disable WiFi adapter
+- **manage-wifi.ps1** - WiFi Management Menu Launcher
 
 ## infrastructure/proxmox (6 scripts)
 
@@ -267,13 +256,12 @@ Automatically generated script inventory. Last updated: November 22, 2025
 - **backup-shell-configs.sh** - Shell Configuration Backup Script
 - **restore-shell-configs.sh** - Shell Configuration Restore Script
 
-## shell-management/utils (5 scripts)
+## shell-management/utils (4 scripts)
 
 - **add-exiftool-to-path.ps1** - Add ExifTool to User PATH
 - **generate-bash-config.ps1** - Generate Bash Configuration from Central JSON
 - **setup-homelab-config.ps1** - Homelab Configuration Setup
 - **Update-ClaudeDate.ps1** - Update Claude Code date awareness
-- **winfetch.ps1** - (!) This file must to be saved in UTF-8 with BOM encoding in order to work with legacy Powershell 5.x
 
 ## shell-management/utils/maintenance/cleanup-tools (3 scripts)
 
