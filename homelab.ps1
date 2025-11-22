@@ -5,7 +5,6 @@
     Central entry point for all maintenance, media, and infrastructure scripts.
     Handles PowerShell and Bash script execution seamlessly.
 #>
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
 param()
 
 # Configuration
@@ -28,7 +27,7 @@ function Invoke-Script {
     param($ScriptPath)
 
     if (-not (Test-Path $ScriptPath)) {
-        Write-Host "Error: Script not found at $ScriptPath" -ForegroundColor Red
+        Write-Console "Error: Script not found at $ScriptPath" -ForegroundColor Red
         Read-Host "Press Enter to continue..."
         return
     }
@@ -36,8 +35,8 @@ function Invoke-Script {
     $extension = [System.IO.Path]::GetExtension($ScriptPath).ToLower()
     $fileName = [System.IO.Path]::GetFileName($ScriptPath)
 
-    Write-Host "Running: $fileName" -ForegroundColor Yellow
-    Write-Host "======================================================" -ForegroundColor DarkGray
+    Write-Console "Running: $fileName" -ForegroundColor Yellow
+    Write-Console "======================================================" -ForegroundColor DarkGray
 
     if ($extension -eq ".ps1") {
         # Run PowerShell script from dev root
@@ -73,12 +72,12 @@ function Invoke-Script {
         wsl bash -c "cd '$wslDevRoot' && bash '$wslScriptPath'"
     }
     else {
-        Write-Host "Unknown file type: $extension" -ForegroundColor Red
+        Write-Console "Unknown file type: $extension" -ForegroundColor Red
     }
 
-    Write-Host ""
-    Write-Host "======================================================" -ForegroundColor DarkGray
-    Write-Host "Execution Complete." -ForegroundColor Green
+    Write-Console ""
+    Write-Console "======================================================" -ForegroundColor DarkGray
+    Write-Console "Execution Complete." -ForegroundColor Green
     Read-Host "Press any key to continue..."
 }
 
@@ -97,7 +96,7 @@ function Show-SubMenu {
                    Sort-Object Name
 
         if ($scripts.Count -eq 0) {
-            Write-Host "No scripts found in $Path" -ForegroundColor Yellow
+            Write-Console "No scripts found in $Path" -ForegroundColor Yellow
             Read-Host "Press Enter to go back..."
             return
         }
@@ -112,14 +111,14 @@ function Show-SubMenu {
             # Calculate relative path for display
             $relPath = $script.FullName.Replace($devRoot + "\", "")
 
-            Write-Host "  $($i + 1). $($script.Name)" -ForegroundColor White
-            Write-Host "      - $desc" -ForegroundColor Gray
-            Write-Host "      Path: $relPath" -ForegroundColor DarkGray
-            Write-Host ""
+            Write-Console "  $($i + 1). $($script.Name)" -ForegroundColor White
+            Write-Console "      - $desc" -ForegroundColor Gray
+            Write-Console "      Path: $relPath" -ForegroundColor DarkGray
+            Write-Console ""
         }
 
-        Write-Host "  B. Back to main menu" -ForegroundColor Yellow
-        Write-Host "======================================================" -ForegroundColor Cyan
+        Write-Console "  B. Back to main menu" -ForegroundColor Yellow
+        Write-Console "======================================================" -ForegroundColor Cyan
 
         $selection = Read-Host "Select script to run (number or 'B' to back)"
 
@@ -137,7 +136,9 @@ function Show-MainMenu {
         Write-Header "MAIN MENU"
 
         $categories = @(
-            @{ Name = "Media Tools"; Path = "media\tools" },
+            @{ Name = "Media - Clients"; Path = "media\clients" },
+            @{ Name = "Media - Services"; Path = "media\services" },
+            @{ Name = "Media - Tools"; Path = "media\tools" },
             @{ Name = "Infrastructure"; Path = "infrastructure" },
             @{ Name = "Shell Management"; Path = "shell-management" },
             @{ Name = "Documentation & Maintenance"; Path = "documentation" },
@@ -145,11 +146,11 @@ function Show-MainMenu {
         )
 
         for ($i = 0; $i -lt $categories.Count; $i++) {
-            Write-Host "  $($i + 1). $($categories[$i].Name)" -ForegroundColor White
+            Write-Console "  $($i + 1). $($categories[$i].Name)" -ForegroundColor White
         }
 
-        Write-Host "  Q. Quit" -ForegroundColor Yellow
-        Write-Host "======================================================" -ForegroundColor Cyan
+        Write-Console "  Q. Quit" -ForegroundColor Yellow
+        Write-Console "======================================================" -ForegroundColor Cyan
 
         $selection = Read-Host "Select category"
 
@@ -168,7 +169,7 @@ function Show-MainMenu {
 
 # Initial environment check
 if (-not (Get-Command wsl -ErrorAction SilentlyContinue)) {
-    Write-Host "WARNING: WSL is not installed or not in PATH. Bash scripts will fail." -ForegroundColor Red
+    Write-Console "WARNING: WSL is not installed or not in PATH. Bash scripts will fail." -ForegroundColor Red
     Start-Sleep -Seconds 2
 }
 

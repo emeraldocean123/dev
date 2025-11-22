@@ -1,0 +1,275 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Homelab Settings",
+    "description": "Configuration schema for homelab infrastructure settings",
+    "type": "object",
+    "required": ["Owner", "Network", "Paths"],
+    "properties": {
+        "Owner": {
+            "type": "string",
+            "description": "Owner name for the homelab"
+        },
+        "Network": {
+            "type": "object",
+            "required": ["Subnet", "Gateway", "Hosts"],
+            "properties": {
+                "Subnet": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/[0-9]{1,2}$",
+                    "description": "Network subnet in CIDR notation (e.g., XXX.XXX.XXX.XXX/XX)"
+                },
+                "Gateway": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                    "description": "Network gateway IP address"
+                },
+                "Hosts": {
+                    "type": "object",
+                    "description": "Network hosts configuration",
+                    "properties": {
+                        "Primary": {
+                            "$ref": "#/definitions/ProxmoxHost"
+                        },
+                        "Secondary": {
+                            "$ref": "#/definitions/ProxmoxHost"
+                        },
+                        "NAS": {
+                            "$ref": "#/definitions/NetworkHost"
+                        },
+                        "Router": {
+                            "$ref": "#/definitions/NetworkDevice"
+                        },
+                        "Switch": {
+                            "$ref": "#/definitions/NetworkDevice"
+                        },
+                        "PDU": {
+                            "$ref": "#/definitions/NetworkDevice"
+                        },
+                        "KVM": {
+                            "$ref": "#/definitions/NetworkDevice"
+                        }
+                    }
+                },
+                "Containers": {
+                    "type": "object",
+                    "description": "LXC container definitions",
+                    "patternProperties": {
+                        "^[A-Za-z]+$": {
+                            "$ref": "#/definitions/Container"
+                        }
+                    }
+                }
+            }
+        },
+        "Paths": {
+            "type": "object",
+            "required": ["DevRoot"],
+            "properties": {
+                "DevRoot": {
+                    "type": "string",
+                    "description": "Root path to dev folder"
+                },
+                "MylioCatalog": {
+                    "type": "string",
+                    "description": "Path to Mylio catalog"
+                },
+                "ImmichLibrary": {
+                    "type": "string",
+                    "description": "Path to Immich library"
+                },
+                "MediaWorkspace": {
+                    "type": "string",
+                    "description": "Path to media workspace folder"
+                },
+                "ProxmoxScriptRoot": {
+                    "type": "string",
+                    "description": "Root path for scripts on Proxmox hosts"
+                }
+            }
+        },
+        "SSH": {
+            "type": "object",
+            "properties": {
+                "KeyFile": {
+                    "type": "string",
+                    "description": "Path to SSH private key file"
+                },
+                "ConfigFile": {
+                    "type": "string",
+                    "description": "Path to SSH config file"
+                }
+            }
+        },
+        "Backup": {
+            "type": "object",
+            "description": "3-tier backup architecture configuration",
+            "properties": {
+                "Layer1": {
+                    "$ref": "#/definitions/BackupLayer",
+                    "description": "Primary backup layer (PBS on Primary)"
+                },
+                "Layer2": {
+                    "$ref": "#/definitions/BackupLayer",
+                    "description": "Secondary backup layer (ZFS replication)"
+                },
+                "Layer3": {
+                    "$ref": "#/definitions/BackupLayer",
+                    "description": "Tertiary backup layer (NAS rsync)"
+                }
+            }
+        },
+        "Cloud": {
+            "type": "object",
+            "properties": {
+                "RcloneRemote": {
+                    "type": "string",
+                    "description": "Rclone remote name for cloud backups"
+                },
+                "ConfigBackupPath": {
+                    "type": "string",
+                    "description": "Path in cloud storage for config backups"
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ProxmoxHost": {
+            "type": "object",
+            "required": ["Name", "IP", "User"],
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "Hostname"
+                },
+                "IP": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                    "description": "IP address"
+                },
+                "User": {
+                    "type": "string",
+                    "description": "SSH username"
+                },
+                "Mac": {
+                    "type": "string",
+                    "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+                    "description": "MAC address for Wake-on-LAN"
+                },
+                "Role": {
+                    "type": "string",
+                    "description": "Host role description"
+                },
+                "ScriptPath": {
+                    "type": "string",
+                    "description": "Default script path on host"
+                }
+            }
+        },
+        "NetworkHost": {
+            "type": "object",
+            "required": ["Name", "IP", "User"],
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "Hostname"
+                },
+                "IP": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                    "description": "IP address"
+                },
+                "User": {
+                    "type": "string",
+                    "description": "Username"
+                },
+                "Mac": {
+                    "type": "string",
+                    "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+                    "description": "MAC address"
+                },
+                "Role": {
+                    "type": "string",
+                    "description": "Host role description"
+                }
+            }
+        },
+        "NetworkDevice": {
+            "type": "object",
+            "required": ["Name", "IP"],
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "Device name"
+                },
+                "IP": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                    "description": "IP address"
+                },
+                "User": {
+                    "type": "string",
+                    "description": "Admin username"
+                },
+                "Model": {
+                    "type": "string",
+                    "description": "Device model"
+                }
+            }
+        },
+        "Container": {
+            "type": "object",
+            "required": ["ID", "IP", "Role"],
+            "properties": {
+                "ID": {
+                    "type": "integer",
+                    "minimum": 100,
+                    "maximum": 9999,
+                    "description": "LXC container ID"
+                },
+                "IP": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                    "description": "Container IP address"
+                },
+                "Role": {
+                    "type": "string",
+                    "description": "Container role description"
+                }
+            }
+        },
+        "BackupLayer": {
+            "type": "object",
+            "properties": {
+                "Host": {
+                    "type": "string",
+                    "description": "Backup host name"
+                },
+                "Service": {
+                    "type": "string",
+                    "description": "Backup service name"
+                },
+                "Dataset": {
+                    "type": "string",
+                    "description": "ZFS dataset path"
+                },
+                "Path": {
+                    "type": "string",
+                    "description": "Backup path"
+                },
+                "Method": {
+                    "type": "string",
+                    "enum": ["PBS", "ZFS send/receive", "rsync"],
+                    "description": "Backup method"
+                },
+                "Schedule": {
+                    "type": "string",
+                    "description": "Backup schedule"
+                },
+                "Trigger": {
+                    "type": "string",
+                    "description": "Backup trigger method"
+                }
+            }
+        }
+    }
+}
