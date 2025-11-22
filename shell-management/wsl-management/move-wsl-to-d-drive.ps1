@@ -14,6 +14,8 @@ if (Test-Path $libPath) {
 $distroName = "Debian"
 $exportPath = "D:\WSL\Exports\debian-export.tar"
 $importPath = "D:\WSL\Debian"
+# Configuration: Set your WSL username here (change if different from Windows user)
+$wslUser = "josep"
 
 Write-Console "=== Move WSL Debian to D Drive ===" -ForegroundColor Cyan
 Write-Console ""
@@ -75,9 +77,9 @@ Write-Console "Verifying new installation:" -ForegroundColor Yellow
 wsl --list --verbose
 Write-Console ""
 
-# Set default user (replace 'josep' with your WSL username if different)
-Write-Console "Setting default user..." -ForegroundColor Yellow
-wsl -d $distroName -u root -- bash -c "echo '[user]' > /etc/wsl.conf && echo 'default=josep' >> /etc/wsl.conf"
+# Set default user
+Write-Console "Setting default user to $wslUser..." -ForegroundColor Yellow
+wsl -d $distroName -u root -- bash -c "echo '[user]' > /etc/wsl.conf && echo 'default=$wslUser' >> /etc/wsl.conf"
 Write-Console ""
 
 # Cleanup
@@ -90,7 +92,7 @@ Write-Console ""
 Write-Console "=== Migration Complete ===" -ForegroundColor Green
 Write-Console ""
 Write-Console "Summary:" -ForegroundColor Cyan
-Write-Console "  - Old location: C:\Users\josep\AppData\Local\Packages\..." -ForegroundColor Gray
+Write-Console "  - Old location: $env:LOCALAPPDATA\Packages\..." -ForegroundColor Gray
 Write-Console "  - New location: D:\WSL\Debian" -ForegroundColor Green
 Write-Console "  - Backup export: $exportPath" -ForegroundColor Gray
 Write-Console ""

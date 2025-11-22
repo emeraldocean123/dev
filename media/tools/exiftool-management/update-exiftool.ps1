@@ -16,12 +16,12 @@ $downloadUrl = "https://exiftool.org/exiftool-$version.zip"
 $tempZip = "$env:TEMP\exiftool-$version.zip"
 $tempExtract = "$env:TEMP\exiftool-$version"
 
-# ExifTool installation paths (including DigiKam)
+# ExifTool installation paths (using environment variables for portability)
 $installations = @(
     "D:\Files\Programs-Portable\ExifTool",
-    "C:\Users\josep\AppData\Local\Programs\ExifTool",
-    "C:\Users\josep\AppData\Local\Programs\ExifToolGUI",
-    "C:\Program Files\digiKam"
+    "$env:LOCALAPPDATA\Programs\ExifTool",
+    "$env:LOCALAPPDATA\Programs\ExifToolGUI",
+    "$env:ProgramFiles\digiKam"
 )
 
 # Check if DigiKam is running before updating
