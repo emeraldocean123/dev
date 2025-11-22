@@ -2,22 +2,26 @@
 
 **The Smartest Photo & Video Organizer Ever Built**
 
-**Version:** 3.9.0
+**Version:** 4.0.0
 **License:** MIT
 
-> "Exact duplicates. RAW+JPG pairing. Orphaned XMP rescue. Keyword folders. One script to rule them all."
+> "Exact duplicates. RAW+JPG pairing. Orphaned XMP rescue. Three action modes. PowerShell-compatible naming. Unified media tools library. One script to rule them all."
 
-Professional-grade media and file deduplication tool. Uses SHA256 content matching for all files, intelligent RAW+JPG pairing, XMP sidecar support (both naming styles), orphaned XMP rescue, keyword-based organization for media, and extension-based organization for non-media files. The complete open-source alternative to Adobe Lightroom's library management.
+Professional-grade media and file deduplication tool. Uses SHA256 content matching for all files, intelligent RAW+JPG pairing, XMP sidecar support (both naming styles), orphaned XMP rescue, simple or keyword-based organization for media, extension-based organization for non-media files, and three action modes (Copy/Move/Rename-only). Includes PowerShell-compatible naming with camera metadata. The complete open-source alternative to Adobe Lightroom's library management.
 
 ## ✨ Features
 
 ### Core Functionality
 - ✅ **Exact Duplicate Detection** - SHA256 content hashing (no false positives)
+- ✅ **Three Action Modes** - Copy (safe backup), Move (destructive cleanup), Rename-only (in-place organization)
+- ✅ **Two Folder Structures** - Simple (YYYY/MM) or Keywords (Keywords/[Keyword]/YYYY/MM)
+- ✅ **PowerShell-Compatible Naming** - `YYYY-MM-DD-HHmmss-Make-Model-Hash.ext` format with camera metadata
 - ✅ **All File Types** - Processes media AND non-media files (documents, archives, etc.)
 - ✅ **RAW+JPG Pairing** - Keeps both files together with the same hash
 - ✅ **XMP Sidecar Handling** - Supports both `.xmp` and `.ext.xmp` formats
-- ✅ **Keyword-Based Organization** - `Keywords/[Keyword]/[Year]/[Month]/filename` structure with optional filtering
 - ✅ **Extension-Based Organization** - `Non-Media/[Extension]/filename` organized by extension (PDF, ZIP, TXT, etc.)
+- ✅ **Enhanced Collision Handling** - Destination tracking prevents overwrites even with complex duplicates
+- ✅ **Unified Code Library** - Shares utilities with other media tools via `media_common.py`
 - ✅ **Interactive Setup** - No hardcoded paths, fully configurable
 - ✅ **Dry-Run Mode** - Preview all operations before committing
 
@@ -70,6 +74,92 @@ Professional-grade media and file deduplication tool. Uses SHA256 content matchi
     └── [source-folder-structure]/
         └── orphaned-file.xmp
 ```
+
+## 🎯 Action Modes
+
+Deduplicate Pro offers three operational modes to suit different workflows:
+
+### Copy Mode (Safe Backup)
+- **Default behavior**: Non-destructive copying
+- **Source files**: Remain untouched in original locations
+- **Use case**: Organizing a backup library while preserving originals
+- **Safety**: Maximum - originals never deleted
+
+### Move Mode (Destructive Cleanup)
+- **Behavior**: Moves files instead of copying
+- **Source files**: Deleted after successful move
+- **Use case**: Consolidating scattered files into organized structure
+- **Safety**: Medium - verify with dry-run first
+
+### Rename-Only Mode (In-Place Organization)
+- **Behavior**: Renames files in place without moving
+- **Source files**: Stay in current folders with new names
+- **Use case**: Standardizing filenames without reorganizing folders
+- **Safety**: Medium - renames are permanent
+
+## 📁 Folder Structures
+
+### Simple Mode (YYYY/MM)
+Clean, date-based organization perfect for chronological browsing:
+```
+/destination/
+├── 2024/
+│   ├── 01/
+│   │   ├── 2024-01-15-143052-sony-a_7_r_iii-4f2a9b3c.jpg
+│   │   └── 2024-01-15-143052-sony-a_7_r_iii-4f2a9b3c.ARW
+│   └── 12/
+│       └── 2024-12-25-103045-canon-eos_r_5-a1b2c3d4.jpg
+└── 2025/
+    └── 01/
+        └── 2025-01-01-120000-nikon-z_9-9f8e7d6c.NEF
+```
+
+### Keywords Mode (Keywords/[Keyword]/YYYY/MM)
+Keyword-based organization for project/category sorting:
+```
+/destination/
+├── Keywords/
+│   ├── Family/
+│   │   └── 2024/
+│   │       └── 12/
+│   │           └── 2024-12-25-103045-canon-eos_r_5-a1b2c3d4.jpg
+│   └── Vacation/
+│       └── 2024/
+│           └── 07/
+│               └── 2024-07-04-142015-sony-a_7_r_iii-9f8e7d6c.mp4
+└── No Keywords/
+    └── 2024/
+        └── 08/
+            └── 2024-08-15-101530-nikon-z_9-1a2b3c4d.jpg
+```
+
+## 🏷️ PowerShell-Compatible Naming
+
+Files are renamed using a structured format matching PowerShell conventions:
+
+**Format:** `YYYY-MM-DD-HHmmss-Make-Model-Hash.ext`
+
+**Example:** `2024-12-25-103045-sony-a_7_r_iii-4f2a9b3c.jpg`
+
+**Components:**
+- `2024-12-25-103045` - Timestamp from EXIF metadata (ISO 8601)
+- `sony` - Camera make (sanitized, lowercase)
+- `a_7_r_iii` - Camera model (sanitized with separators)
+- `4f2a9b3c` - SHA256 hash (first 8 characters)
+- `.jpg` - File extension (corrected via ExifTool FileType)
+
+**Sanitization Rules:**
+- All lowercase
+- Non-alphanumeric characters → underscore
+- Separators added between letters and numbers (`7R` → `7_r`)
+- Maximum 30 characters per camera component
+
+**Benefits:**
+- Cross-platform compatibility (PowerShell + Python)
+- Sortable chronologically
+- Unique per content (hash-based)
+- Camera identification at a glance
+- Professional appearance
 
 ## 🚀 Quick Start
 
@@ -258,15 +348,25 @@ None required. ExifTool must be in PATH.
 ## 📁 Repository Structure
 
 ```
-deduplicate-pro/
-├── README.md                    # Complete documentation
-├── LICENSE                      # MIT License
-├── deduplicate-pro.py               # Main script (v3.7.0)
-├── requirements.txt             # Python dependencies (tqdm)
-├── .gitignore                   # Git ignore rules
-├── deduplicate_logs/            # Timestamped log files (gitignored)
-└── deduplicate_configs/         # Saved run configurations (gitignored)
+media/tools/
+├── deduplicate/
+│   ├── README.md                    # Complete documentation
+│   ├── deduplicate-pro.py           # Main script (v4.0.0)
+│   ├── requirements.txt             # Python dependencies (tqdm, colorama)
+│   ├── deduplicate_logs/            # Timestamped log files (gitignored)
+│   └── deduplicate_configs/         # Saved run configurations (gitignored)
+├── lib/
+│   └── media_common.py              # Shared utilities library (v1.0.0)
+├── metadata-scrubber/               # Remove 3rd-party metadata
+├── xmp-sidecar/                     # Export metadata to XMP files
+└── timestamp-sync/                  # Bidirectional timestamp sync
 ```
+
+**Unified Code Library:**
+- `media_common.py` provides shared utilities for all media tools
+- Eliminates ~200 lines of duplicated code
+- Consistent constants, logging, ExifTool interface, UI helpers
+- Future-proof foundation for Media Tools Suite expansion
 
 ## 🤝 Contributing
 
@@ -308,6 +408,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Together they form the complete open-source alternative to Adobe Lightroom's library management.
 
 ## 📈 Changelog
+
+### v4.0.0 - CODE UNIFICATION & ACTION MODES
+- **Three action modes**: Copy (safe backup), Move (destructive cleanup), Rename-only (in-place organization)
+- **Two folder structures**: Simple (YYYY/MM) or Keywords (Keywords/[Keyword]/YYYY/MM)
+- **PowerShell-compatible naming**: `YYYY-MM-DD-HHmmss-Make-Model-Hash.ext` format with camera metadata
+- **Camera string sanitization**: Lowercase conversion with separator logic matching PowerShell conventions
+- **Enhanced collision handling**: Destination tracking with `used_destinations` set prevents overwrites
+- **Unified code library**: Created `media_common.py` shared library for all media tools
+- **Extension correction**: FileType detection ensures accurate file extensions
+- **Modular architecture**: Foundation for Media Tools Suite with shared utilities
+- **Breaking change**: Naming format changed from UUID-based to camera metadata format
+- **Performance**: Same speed, enhanced reliability with destination tracking
 
 ### v3.7.0 - PERFORMANCE TUNING (Worker Selection)
 - **Performance profiles**: Choose from Conservative (2), Balanced (CPU/2), Fast (CPU-2), or Maximum (all cores)
