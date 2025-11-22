@@ -45,7 +45,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from lib.media_common import (
     PHOTO_EXTENSIONS, VIDEO_EXTENSIONS, SKIP_DIRS,
     WORKER_PROFILES, get_optimal_workers,
-    print_phase, print_success, print_error, print_warning, print_info
+    print_phase, print_success, print_error, print_warning
 )
 
 try:

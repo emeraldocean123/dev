@@ -52,7 +52,7 @@ try:
     from lib.media_common import (
         PHOTO_EXTENSIONS, VIDEO_EXTENSIONS, FILETYPE_TO_EXT, SKIP_DIRS,
         WORKER_PROFILES, get_optimal_workers, setup_logging,
-        print_phase, print_success, print_error, print_warning, print_info,
+        print_phase, print_success, print_error, print_warning,
         check_exiftool
     )
     try:
