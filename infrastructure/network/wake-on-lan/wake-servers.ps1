@@ -1,21 +1,22 @@
 #
 # Wake-on-LAN Script for Network Infrastructure
-# Sends WOL magic packets to wake network devices from sleep/shutdown
+# Config-driven WOL magic packet sender for network devices
 # Supports individual devices or groups (proxmox, all)
+#
+# CONFIGURATION:
+#   Source: .config/homelab.settings.json
+#   Required Fields:
+#     - Network.Hosts.Primary.Mac    (Proxmox primary host)
+#     - Network.Hosts.Secondary.Mac  (Proxmox secondary host)
+#     - Network.Hosts.NAS.Mac        (Synology NAS)
 #
 # DEPLOYMENT:
 #   Device: Portable - can run from any system on the network
 #   Primary: Windows 11 development laptop (PowerShell)
-#   Path:   ~/Documents/dev/wake-on-lan/wake-servers.ps1
-#   Backup: Same location (this is the primary copy)
-#
-# TARGET DEVICES:
-#   - intel-1250p-proxmox-host (192.168.1.40) - MAC: a8:b4:e0:07:9b:cd
-#   - intel-n6005-proxmox-host (192.168.1.41) - MAC: 7c:2b:e1:13:92:4b
-#   - synology-1520-nas (192.168.1.10) - MAC: 00:11:32:ff:4a:a5
+#   Path:   infrastructure/network/wake-on-lan/wake-servers.ps1
 #
 # EXECUTION:
-#   - Run from any system on 192.168.1.0/24 network
+#   - Loads MAC addresses from homelab.settings.json (zero hardcoded secrets)
 #   - Uses built-in .NET UDP sockets (no external dependencies)
 #   - Sends UDP broadcast packets on port 9
 #
@@ -23,7 +24,7 @@
 #   ./wake-servers.ps1 [1250p|n6005|synology|proxmox|all]
 #   Examples:
 #     ./wake-servers.ps1          # Wake all devices (default)
-#     ./wake-servers.ps1 1250p    # Wake intel-1250p only
+#     ./wake-servers.ps1 1250p    # Wake Primary Proxmox host
 #     ./wake-servers.ps1 proxmox  # Wake both Proxmox servers
 
 param(
@@ -41,10 +42,35 @@ if (Test-Path $libPath) {
     # Fallback: simple Write-Console function
     function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
 }
-# MAC addresses
-$MAC_1250P = 'a8:b4:e0:07:9b:cd'
-$MAC_N6005 = '7c:2b:e1:13:92:4b'
-$MAC_SYNOLOGY = '00:11:32:ff:4a:a5'
+
+# Load MAC addresses from config
+$configPath = Join-Path $PSScriptRoot "..\..\..\.config\homelab.settings.json"
+
+if (-not (Test-Path $configPath)) {
+    Write-Console "ERROR: Config file not found at $configPath" -ForegroundColor Red
+    Write-Console "       Please ensure .config/homelab.settings.json exists" -ForegroundColor Yellow
+    exit 1
+}
+
+try {
+    $config = Get-Content $configPath -Raw | ConvertFrom-Json
+
+    # Map from JSON schema to script variables
+    $MAC_1250P    = $config.Network.Hosts.Primary.Mac
+    $MAC_N6005    = $config.Network.Hosts.Secondary.Mac
+    $MAC_SYNOLOGY = $config.Network.Hosts.NAS.Mac
+
+    # Validate that MACs were loaded
+    if (-not $MAC_1250P -or -not $MAC_N6005 -or -not $MAC_SYNOLOGY) {
+        Write-Console "ERROR: Missing MAC addresses in config file" -ForegroundColor Red
+        Write-Console "       Check Network.Hosts.Primary.Mac, Secondary.Mac, and NAS.Mac" -ForegroundColor Yellow
+        exit 1
+    }
+}
+catch {
+    Write-Console "ERROR: Failed to load config: $_" -ForegroundColor Red
+    exit 1
+}
 
 # Function to send WOL magic packet
 function Send-WOLPacket {
