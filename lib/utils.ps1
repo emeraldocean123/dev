@@ -52,15 +52,43 @@ function Write-Console {
 
 <#
 .SYNOPSIS
-    Ensures the script is running with Administrator privileges.
+    Ensures the script is running with Administrator/root privileges.
+    Cross-platform: Works on Windows, Linux, and macOS.
 #>
 function Assert-Admin {
-    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = [Security.Principal.WindowsPrincipal]$identity
+    # PowerShell Core provides $IsWindows, $IsLinux, $IsMacOS
+    # For Windows PowerShell 5.1, $IsWindows doesn't exist (assume Windows)
+    $isWindowsOS = if ($null -eq $IsWindows) { $true } else { $IsWindows }
 
-    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        Write-Console "ERROR: This script must be run as Administrator." -ForegroundColor Red
-        exit 1
+    if ($isWindowsOS) {
+        # Windows: Check Administrator role
+        try {
+            $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+            $principal = [Security.Principal.WindowsPrincipal]$identity
+
+            if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+                Write-Console "ERROR: This script must be run as Administrator." -ForegroundColor Red
+                Write-Console "       Right-click PowerShell and select 'Run as Administrator'" -ForegroundColor Yellow
+                exit 1
+            }
+        }
+        catch {
+            Write-Console "WARNING: Could not verify Administrator privileges: $_" -ForegroundColor Yellow
+        }
+    }
+    else {
+        # Linux/macOS: Check if running as root (UID 0)
+        try {
+            $uid = & id -u 2>$null
+            if ($LASTEXITCODE -ne 0 -or [int]$uid -ne 0) {
+                Write-Console "ERROR: This script must be run as root." -ForegroundColor Red
+                Write-Console "       Use: sudo pwsh -File $($MyInvocation.ScriptName)" -ForegroundColor Yellow
+                exit 1
+            }
+        }
+        catch {
+            Write-Console "WARNING: Could not verify root privileges: $_" -ForegroundColor Yellow
+        }
     }
 }
 

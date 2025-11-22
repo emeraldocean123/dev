@@ -1,0 +1,17 @@
+# Python Dependencies for Media Tools
+# =====================================
+# Install: pip install -r requirements.txt
+
+# Progress bars for media-manager.py and media_common.py
+# Optional but recommended for better UX
+tqdm>=4.65.0
+
+# System Requirements (Not installable via pip):
+# -----------------------------------------------
+# - ExifTool (https://exiftool.org/)
+#   Required for all media metadata operations
+#   Install on Windows: choco install exiftool
+#   Install on Linux: apt install libimage-exiftool-perl
+#   Install on macOS: brew install exiftool
+#
+# - Python 3.8 or higher
