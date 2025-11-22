@@ -22,7 +22,7 @@ foreach ($file in $files) {
     $relPath = $file.FullName.Replace($devRoot.Path + "\", "").Replace("\", "/")
 
     try {
-        $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
+        $content = Get-Content $file.FullName -Raw -Encoding UTF8 -ErrorAction Stop
         if (-not $content) { continue }
 
         # 1. Hardcoded Path Check (Windows & Linux users)
@@ -43,11 +43,28 @@ foreach ($file in $files) {
             }
 
             # BOM Check for Bash (breaks shebang)
-            $bytes = Get-Content $file.FullName -Encoding Byte -TotalCount 3 -ErrorAction SilentlyContinue
-            if ($bytes -and $bytes.Count -ge 3) {
-                if ($bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
-                    $bomBashScripts += $relPath
-                    $issues++
+            try {
+                $bytes = Get-Content $file.FullName -AsByteStream -TotalCount 3 -ErrorAction Stop
+                if ($bytes -and $bytes.Count -ge 3) {
+                    if ($bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+                        $bomBashScripts += $relPath
+                        $issues++
+                    }
+                }
+            }
+            catch {
+                # Fallback for older PowerShell versions
+                try {
+                    $bytes = Get-Content $file.FullName -Encoding Byte -TotalCount 3 -ErrorAction SilentlyContinue
+                    if ($bytes -and $bytes.Count -ge 3) {
+                        if ($bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+                            $bomBashScripts += $relPath
+                            $issues++
+                        }
+                    }
+                }
+                catch {
+                    # Skip BOM check if both methods fail
                 }
             }
         }
