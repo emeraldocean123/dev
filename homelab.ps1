@@ -186,7 +186,9 @@ function Show-ScriptsMenu {
             if ($ext -eq ".py") {
                 python $targetScript
             } elseif ($ext -eq ".sh") {
-                bash $targetScript
+                # Convert Windows path to Unix format for Git Bash
+                $unixPath = $targetScript -replace '\\', '/' -replace '^([A-Z]):', '/$1'
+                bash $unixPath
             } else {
                 & $targetScript
             }
