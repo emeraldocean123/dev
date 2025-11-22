@@ -33,13 +33,13 @@ Replaced mpv.net's `libmpv-2.dll` with a newer build from shinchiro's mpv-winbui
 - **HEIC Support:** ✅ Expected (needs testing)
 
 ### Backup
-- **Location:** `C:\Users\josep\AppData\Local\Programs\mpv.net\libmpv-2.dll.backup-20251110`
+- **Location:** `C:\Users\<username>\AppData\Local\Programs\mpv.net\libmpv-2.dll.backup-20251110`
 - **Size:** 98MB (original file)
 
 ## Installation Steps
 
 1. ✅ Downloaded `mpv-dev-x86_64-20251110-git-bbafb74.7z` (29MB)
-2. ✅ Extracted to `~/Downloads/mpv-dev/`
+2. ✅ Extracted to `<User Downloads Directory>`
 3. ✅ Backed up original DLL to `libmpv-2.dll.backup-20251110`
 4. ✅ Copied new `libmpv-2.dll` (110MB) to mpv.net directory
 
@@ -49,7 +49,7 @@ Replaced mpv.net's `libmpv-2.dll` with a newer build from shinchiro's mpv-winbui
 
 **Try opening a HEIC file:**
 ```powershell
-& "C:\Users\josep\AppData\Local\Programs\mpv.net\mpvnet.exe" "path\to\image.heic"
+& "C:\Users\<username>\AppData\Local\Programs\mpv.net\mpvnet.exe" "path\to\image.heic"
 ```
 
 **Expected:**
@@ -66,7 +66,7 @@ Replaced mpv.net's `libmpv-2.dll` with a newer build from shinchiro's mpv-winbui
 
 **Try opening an HDR video:**
 ```powershell
-& "C:\Users\josep\AppData\Local\Programs\mpv.net\mpvnet.exe" "path\to\hdr-video.mp4"
+& "C:\Users\<username>\AppData\Local\Programs\mpv.net\mpvnet.exe" "path\to\hdr-video.mp4"
 ```
 
 **Expected:**
@@ -92,15 +92,15 @@ If the new DLL causes issues, run this script:
 
 ```powershell
 # Restore original libmpv-2.dll
-cd "C:\Users\josep\Documents\dev\applications\media-players\mpv"
+cd "<Repository Root>/media/clients/mpv"
 .\restore-libmpv-original.ps1
 ```
 
 Or manually:
 ```powershell
 Copy-Item `
-  "C:\Users\josep\AppData\Local\Programs\mpv.net\libmpv-2.dll.backup-20251110" `
-  "C:\Users\josep\AppData\Local\Programs\mpv.net\libmpv-2.dll" `
+  "C:\Users\<username>\AppData\Local\Programs\mpv.net\libmpv-2.dll.backup-20251110" `
+  "C:\Users\<username>\AppData\Local\Programs\mpv.net\libmpv-2.dll" `
   -Force
 
 Write-Host "Original DLL restored. Restart mpv.net." -ForegroundColor Green
@@ -147,18 +147,18 @@ Write-Host "Original DLL restored. Restart mpv.net." -ForegroundColor Green
 
 ## Files Involved
 
-- **mpv.net install:** `C:\Users\josep\AppData\Local\Programs\mpv.net\`
+- **mpv.net install:** `C:\Users\<username>\AppData\Local\Programs\mpv.net\`
 - **Current DLL:** `libmpv-2.dll` (110MB, Nov 9 2025)
 - **Backup DLL:** `libmpv-2.dll.backup-20251110` (98MB, Jan 11 2024)
 - **Downloaded archive:** `~/Downloads/mpv-dev-x86_64-20251110.7z`
-- **Extracted files:** `~/Downloads/mpv-dev/`
+- **Extracted files:** `<User Downloads Directory>`
 
 ## Related Documentation
 
-- **HDR Configuration:** `~/Documents/dev/applications/media-players/mpv/mpv-hdr-configuration.md`
-- **HEIC Workaround:** `~/Documents/dev/applications/media-players/mpv/heic-support-workaround.md`
-- **VLC Setup:** `~/Documents/dev/applications/media-players/vlc/vlc-mpv-keybindings.md`
-- **Restore Script:** `~/Documents/dev/applications/media-players/mpv/restore-libmpv-original.ps1`
+- **HDR Configuration:** `<Repository Root>/media/clients/mpv/mpv-hdr-configuration.md`
+- **HEIC Workaround:** `<Repository Root>/media/clients/mpv/heic-support-workaround.md`
+- **VLC Setup:** `<Repository Root>/media/clients/vlc/vlc-mpv-keybindings.md`
+- **Restore Script:** `<Repository Root>/media/clients/mpv/restore-libmpv-original.ps1`
 
 ## Next Steps
 

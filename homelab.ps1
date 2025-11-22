@@ -1,60 +1,30 @@
-<#
+﻿<#
 .SYNOPSIS
     Homelab Management Menu - Unified Launcher
 .DESCRIPTION
     Central entry point for all maintenance, media, and infrastructure scripts.
     Handles PowerShell and Bash script execution seamlessly.
 #>
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
+param()
 
 # Configuration
 $devRoot = $PSScriptRoot
-$menuTitle = "HOMELAB MANAGEMENT CONSOLE"
 
 # =============================================================================
 # UTILITIES
 # =============================================================================
 
-function Write-Header {
-    param($Title)
-    Clear-Host
-    Write-Host "╔══════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    $pad = 54 - $Title.Length
-    $left = [math]::Floor($pad / 2)
-    $right = [math]::Ceiling($pad / 2)
-    Write-Host "║$(' ' * $left)$Title$(' ' * $right)║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
+# Import Shared Utilities
+$utilsPath = Join-Path $devRoot "lib\utils.ps1"
+if (Test-Path $utilsPath) {
+    . $utilsPath
+} else {
+    Write-Error "Critical Error: Utilities library not found at $utilsPath"
+    exit 1
 }
 
-function Get-WslPath {
-    param([string]$WindowsPath)
-    # Use wslpath to robustly convert Windows C:\Users... to /mnt/c/Users...
-    # Use Start-Process to avoid PowerShell's backslash stripping
-    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-    $pinfo.FileName = "wsl.exe"
-    $pinfo.Arguments = "wslpath -ua `"$WindowsPath`""
-    $pinfo.RedirectStandardOutput = $true
-    $pinfo.RedirectStandardError = $true
-    $pinfo.UseShellExecute = $false
-
-    $p = New-Object System.Diagnostics.Process
-    $p.StartInfo = $pinfo
-    $p.Start() | Out-Null
-    $p.WaitForExit()
-
-    $result = $p.StandardOutput.ReadToEnd().Trim()
-    $error = $p.StandardError.ReadToEnd()
-
-    if ($p.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($result)) {
-        Write-Host "Error: Failed to convert path: $WindowsPath" -ForegroundColor Red
-        if ($error) { Write-Host "  $error" -ForegroundColor Red }
-        return $null
-    }
-
-    return $result
-}
-
-function Run-Script {
+function Invoke-Script {
     param($ScriptPath)
 
     if (-not (Test-Path $ScriptPath)) {
@@ -67,7 +37,7 @@ function Run-Script {
     $fileName = [System.IO.Path]::GetFileName($ScriptPath)
 
     Write-Host "Running: $fileName" -ForegroundColor Yellow
-    Write-Host "══════════════════════════════════════════════════════" -ForegroundColor DarkGray
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor DarkGray
 
     if ($extension -eq ".ps1") {
         # Run PowerShell script
@@ -96,7 +66,7 @@ function Run-Script {
     }
 
     Write-Host ""
-    Write-Host "══════════════════════════════════════════════════════" -ForegroundColor DarkGray
+    Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor DarkGray
     Write-Host "Execution Complete." -ForegroundColor Green
     Read-Host "Press any key to continue..."
 }
@@ -138,7 +108,7 @@ function Show-SubMenu {
         }
 
         Write-Host "  B. Back to main menu" -ForegroundColor Yellow
-        Write-Host "══════════════════════════════════════════════════════" -ForegroundColor Cyan
+        Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
         $selection = Read-Host "Select script to run (number or 'B' to back)"
 
@@ -146,7 +116,7 @@ function Show-SubMenu {
 
         if ($selection -match "^\d+$" -and [int]$selection -ge 1 -and [int]$selection -le $scripts.Count) {
             $scriptToRun = $scripts[[int]$selection - 1]
-            Run-Script -ScriptPath $scriptToRun.FullName
+            Invoke-Script -ScriptPath $scriptToRun.FullName
         }
     }
 }
@@ -168,7 +138,7 @@ function Show-MainMenu {
         }
 
         Write-Host "  Q. Quit" -ForegroundColor Yellow
-        Write-Host "══════════════════════════════════════════════════════" -ForegroundColor Cyan
+        Write-Host "â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•" -ForegroundColor Cyan
 
         $selection = Read-Host "Select category"
 

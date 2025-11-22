@@ -12,7 +12,7 @@
 
 ## Installation
 
-1. Install XnView MP (already installed: `C:\Program Files\XnViewMP`)
+1. Install XnView MP (already installed: `<XnViewMP Installation Directory>`)
 2. Install HEIF Image Extensions from Microsoft Store (required for HEIC support)
 
 ## Current Keybindings Comparison
@@ -115,7 +115,7 @@ If you want to customize keyboard shortcuts:
 Try opening a HEIC file from Mylio:
 
 ```powershell
-& "C:\Program Files\XnViewMP\xnviewmp.exe" "D:\Mylio\path\to\file.heic"
+& "<XnViewMP Installation Directory>\xnviewmp.exe" "<Mylio Library Drive>:\Mylio\path\to\file.heic"
 ```
 
 **Expected results:**
@@ -156,7 +156,7 @@ If HEIC files won't open:
 
 **How to:**
 1. Open XnView MP
-2. Navigate to `D:\Mylio` in Browser mode
+2. Navigate to `<Mylio Library Root>` in Browser mode
 3. Browse thumbnails or open individual images
 4. Use LEFT/RIGHT arrows to navigate
 5. Files remain in Mylio untouched
@@ -175,7 +175,7 @@ If HEIC files won't open:
 **Status:**
 - ✅ Already converted 4,617 HEIC files to JPG
 - ✅ All metadata preserved
-- ✅ Staging folder: `C:\Users\josep\Documents\heic-staging`
+- ✅ Staging folder: `<User Documents Directory>/heic-staging`
 
 ### Recommendation
 
@@ -236,9 +236,9 @@ For consistent image viewing experience between mpv.net and XnView MP:
 
 ## Related Files
 
-- **mpv.net config:** `~/AppData/Roaming/mpv.net/input.conf`
-- **mpv.net location:** `~/AppData/Local/Programs/mpv.net/`
-- **XnView MP config:** `~/AppData/Roaming/XnViewMP/xnview.ini`
-- **XnView MP location:** `C:\Program Files\XnViewMP\`
-- **Mylio library:** `D:\Mylio\` (4,617 HEIC files)
+- **mpv.net config:** `<mpv.net config directory>/input.conf`
+- **mpv.net location:** `<mpv.net installation directory>/`
+- **XnView MP config:** `<XnViewMP config directory>/xnview.ini`
+- **XnView MP location:** `<XnViewMP Installation Directory>\`
+- **Mylio library:** `<Mylio Library Root>\` (4,617 HEIC files)
 - **Converted JPGs:** `~/Documents/heic-staging/` (4,617 files, optional to import)

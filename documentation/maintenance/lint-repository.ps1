@@ -2,7 +2,7 @@
 # Checks for: Hardcoded paths, Mixed Line Endings, Trailing Whitespace, BOM issues
 # Location: documentation/maintenance/lint-repository.ps1
 
-$devRoot = Get-Location
+$devRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
 $issues = 0
 $hardcodedPaths = @()
 $crlfBashScripts = @()
@@ -13,7 +13,7 @@ Write-Host "`n=== Repository Hygiene & Linting Audit ===" -ForegroundColor Cyan
 Write-Host "Scanning repository for portability and compatibility issues...`n" -ForegroundColor Gray
 
 # Get all relevant files
-$files = Get-ChildItem -Recurse -Include *.ps1, *.sh, *.py, *.md, *.json, *.yml, *.yaml -File |
+$files = Get-ChildItem -Path $devRoot.Path -Recurse -Include *.ps1, *.sh, *.py, *.md, *.json, *.yml, *.yaml -File |
     Where-Object { $_.FullName -notlike "*\.git\*" }
 
 Write-Host "Scanning $($files.Count) files..." -ForegroundColor Gray
@@ -28,7 +28,7 @@ foreach ($file in $files) {
         # 1. Hardcoded Path Check (Windows & Linux users)
         if ($content -match 'C:\\Users\\josep' -or $content -match '/home/josep') {
             # Exclude Mylio scripts (environment-specific by design)
-            if ($relPath -notlike "*mylio*" -and $relPath -notlike "*CLAUDE.md*") {
+            if ($relPath -notlike "*mylio*" -and $relPath -notlike "*CLAUDE.md*" -and $relPath -notlike "*lint-repository.ps1*") {
                 $hardcodedPaths += $relPath
                 $issues++
             }
@@ -75,7 +75,7 @@ foreach ($file in $files) {
 }
 
 # 3. Empty Directories
-$allDirs = Get-ChildItem -Recurse -Directory | Where-Object { $_.FullName -notlike "*\.git\*" }
+$allDirs = Get-ChildItem -Path $devRoot.Path -Recurse -Directory | Where-Object { $_.FullName -notlike "*\.git\*" }
 foreach ($dir in $allDirs) {
     $contents = Get-ChildItem $dir.FullName -ErrorAction SilentlyContinue
     if (-not $contents -or $contents.Count -eq 0) {

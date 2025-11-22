@@ -8,25 +8,25 @@ Since you already have 13.42 installed in one location, here's how to copy it to
 # Copy the updated version you already have to the other two locations
 
 # Update location 1 (Portable)
-Copy-Item "C:\Users\josep\AppData\Local\Programs\ExifTool\ExifTool.exe" `
-          "D:\Files\Programs-Portable\ExifTool\exiftool.exe" -Force
+Copy-Item "<User AppData Local Programs Directory>\ExifTool\ExifTool.exe" `
+          "<Portable Programs Drive>\Files\Programs-Portable\ExifTool\exiftool.exe" -Force
 
 # Update location 3 (ExifToolGUI)
-Copy-Item "C:\Users\josep\AppData\Local\Programs\ExifTool\ExifTool.exe" `
-          "C:\Users\josep\AppData\Local\Programs\ExifToolGUI\exiftool.exe" -Force
+Copy-Item "<User AppData Local Programs Directory>\ExifTool\ExifTool.exe" `
+          "<User AppData Local Programs Directory>\ExifToolGUI\exiftool.exe" -Force
 ```
 
 ## Verify All Installations
 
 ```powershell
 # Check version 1
-& "D:\Files\Programs-Portable\ExifTool\exiftool.exe" -ver
+& "<Portable Programs Drive>\Files\Programs-Portable\ExifTool\exiftool.exe" -ver
 
 # Check version 2 (already updated)
-& "C:\Users\josep\AppData\Local\Programs\ExifTool\ExifTool.exe" -ver
+& "<User AppData Local Programs Directory>\ExifTool\ExifTool.exe" -ver
 
 # Check version 3
-& "C:\Users\josep\AppData\Local\Programs\ExifToolGUI\exiftool.exe" -ver
+& "<User AppData Local Programs Directory>\ExifToolGUI\exiftool.exe" -ver
 ```
 
 All three should show **13.42**.

@@ -7,7 +7,7 @@ param(
 )
 
 # Import shared utilities
-$libPath = Join-Path $PSScriptRoot "../../../lib/utils.ps1"
+$libPath = Join-Path $PSScriptRoot "../../lib/utils.ps1"
 if (Test-Path $libPath) {
     . $libPath
 } else {
@@ -15,29 +15,9 @@ if (Test-Path $libPath) {
     # Fallback: simple Write-Console function
     function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
 }
-function Write-Console {
-    param(
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [object[]]$Object,
-        [System.ConsoleColor]$ForegroundColor = [System.ConsoleColor]::Gray
-    )
 
-    $message = ($Object -join ' ')
-    if ($Host.UI -and $Host.UI.RawUI) {
-        $rawUI = $Host.UI.RawUI
-        $previous = $rawUI.ForegroundColor
-        try {
-            $rawUI.ForegroundColor = $ForegroundColor
-            Write-Information -MessageData $message -InformationAction Continue
-        } finally {
-            $rawUI.ForegroundColor = $previous
-        }
-    } else {
-        Write-Information -MessageData $message -InformationAction Continue
-    }
-}
 
-$devPath = "C:\Users\josep\Documents\dev"
+$devPath = $devRoot.Path
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 Write-Console "=== Dev Folder Cleanup ===" -ForegroundColor Cyan
@@ -231,7 +211,7 @@ if ($WhatIf) {
     Write-Console "CLEANUP EXECUTED - Changes have been applied" -ForegroundColor Green
 
     # Save cleanup log
-    $logPath = "C:\Users\josep\Documents\dev\documentation\audits\cleanup-log-$(Get-Date -Format 'yyyy-MM-dd-HHmmss').txt"
+    $logPath = Join-Path $devRoot "documentation\audits\cleanup-log-$(Get-Date -Format 'yyyy-MM-dd-HHmmss').txt"
     $cleanupLog | Out-File -FilePath $logPath -Encoding UTF8
     Write-Console "Cleanup log saved to: $logPath" -ForegroundColor Cyan
 }

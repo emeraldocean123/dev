@@ -143,7 +143,7 @@ Write-Host ""
 
 if ($failed -eq 0) {
     Write-Host "✓ Cloud backup complete" -ForegroundColor Green
-    Write-Host "  Remote: $remote`:$remotePath" -ForegroundColor DarkGray
+    Write-Host -Object "  Remote: $remote`:$remotePath" -ForegroundColor DarkGray
 } else {
     Write-Host "✗ Cloud backup completed with errors" -ForegroundColor Yellow
     exit 1

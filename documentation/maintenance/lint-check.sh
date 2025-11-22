@@ -9,7 +9,16 @@ echo "  Git Folder Comprehensive Lint Check"
 echo "========================================="
 echo ""
 
-cd ~/Documents/git
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Go up 3 levels from documentation/maintenance to get to 'dev', then one more for 'git'
+GIT_ROOT="$(realpath "$SCRIPT_DIR/../../..")"
+
+if [[ ! -d "$GIT_ROOT" ]]; then
+    echo "Error: Could not determine Git root from $SCRIPT_DIR"
+    exit 1
+fi
+
+cd "$GIT_ROOT"
 
 ISSUES=0
 WARNINGS=0
@@ -64,11 +73,11 @@ echo ""
 # Check 3: UTF-8 BOM for PowerShell 5 compatibility
 echo "=== Encoding Check (UTF-8 BOM Requirements) ==="
 
-cd dev 2>/dev/null && bash lib/check-file-encoding.sh || {
+cd "$GIT_ROOT/dev" 2>/dev/null && powershell.exe -File lib/Check-FileEncoding.ps1 || {
     echo "⚠️  Could not run encoding check in dev/"
     ((WARNINGS++)) || true
 }
-cd ~/Documents/git
+cd "$GIT_ROOT"
 
 echo ""
 
@@ -94,7 +103,7 @@ for repo in dev media-deduplicator; do
             echo "  ℹ️  $UNPUSHED unpushed commit(s)"
         fi
         
-        cd ~/Documents/git
+        cd "$GIT_ROOT"
     else
         echo "⚠️  $repo is not a git repository"
         ((WARNINGS++)) || true

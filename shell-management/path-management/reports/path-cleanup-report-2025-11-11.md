@@ -12,7 +12,7 @@ Successfully cleaned Windows USER PATH environment variable, removing duplicate 
 - **Before:** 41 entries in USER PATH
 - **After:** 39 entries in USER PATH
 - **Removed:** 36 entries total (29 duplicates + 7 orphaned paths + fixed typos)
-- **Backup:** `C:\Users\josep\Documents\dev\path-backup-2025-11-11-222945.txt`
+<Repository Root>\path-backup-2025-11-11-222945.txt
 
 ## Issues Fixed
 
@@ -24,7 +24,7 @@ Successfully cleaned Windows USER PATH environment variable, removing duplicate 
 - Node.js and npm paths - deduplicated
 
 ### 2. Removed 7 Orphaned Paths (Non-existent Folders)
-- `C:\Users\josep\bin` (3 instances - folder doesn't exist)
+- `C:\Users\<username>\bin` (3 instances - folder doesn't exist)
 - Old PowerToys path (incorrect location)
 - Old MPV.NET path (program uninstalled)
 - Other phantom paths from uninstalled programs
@@ -41,7 +41,7 @@ Successfully cleaned Windows USER PATH environment variable, removing duplicate 
 
 1. C:\Program Files\Git\mingw64\bin
 2. C:\Program Files\Git\usr\bin
-3. C:\Users\josep\.npm-global
+3. C:\Users\<username>\.npm-global
 4. C:\Program Files\WindowsApps\Microsoft.PowerShell_7.5.4.0_x64__8wekyb3d8bbwe
 5. C:\Program Files\ImageMagick-7.1.2-Q16-HDRI
 6. C:\Program Files\Common Files\Oracle\Java\javapath
@@ -61,29 +61,29 @@ Successfully cleaned Windows USER PATH environment variable, removing duplicate 
 20. C:\Program Files\Git\cmd
 21. C:\Program Files\GitHub CLI
 22. C:\Program Files\nodejs
-23. C:\Users\josep\AppData\Local\Programs\oh-my-posh\bin
-24. C:\Users\josep\AppData\Local\Programs\Python\Python313\Scripts
-25. C:\Users\josep\AppData\Local\Programs\Python\Python313
+23. C:\Users\<username>\AppData\Local\Programs\oh-my-posh\bin
+24. C:\Users\<username>\AppData\Local\Programs\Python\Python313\Scripts
+25. C:\Users\<username>\AppData\Local\Programs\Python\Python313
 26. C:\Program Files (x86)\Nmap
 27. C:\Program Files\Git\usr\bin\core_perl
 28. C:\Program Files\Git\usr\bin\vendor_perl
-29. C:\Users\josep\.bun\bin
-30. C:\Users\josep\AppData\Local\AlienFX Tools
-31. C:\Users\josep\AppData\Local\Microsoft\WindowsApps
-32. C:\Users\josep\AppData\Local\Microsoft\WinGet\Links
-33. C:\Users\josep\AppData\Local\Microsoft\WinGet\Packages\Fastfetch-cli.Fastfetch_Microsoft.Winget.Source_8wekyb3d8bbwe
-34. C:\Users\josep\AppData\Local\Programs\Microsoft VS Code\bin
-35. C:\Users\josep\Documents\PowerShell\Scripts
-36. C:\Users\josep\AppData\Roaming\npm
+29. C:\Users\<username>\.bun\bin
+30. C:\Users\<username>\AppData\Local\AlienFX Tools
+31. C:\Users\<username>\AppData\Local\Microsoft\WindowsApps
+32. C:\Users\<username>\AppData\Local\Microsoft\WinGet\Links
+33. C:\Users\<username>\AppData\Local\Microsoft\WinGet\Packages\Fastfetch-cli.Fastfetch_Microsoft.Winget.Source_8wekyb3d8bbwe
+34. C:\Users\<username>\AppData\Local\Programs\Microsoft VS Code\bin
+35. C:\Users\<username>\Documents\PowerShell\Scripts
+36. C:\Users\<username>\AppData\Roaming\npm
 37. D:\Files\Programs-Portable\ExifTool *(portable version - takes priority)*
-38. D:\Files\Programs-Portable\immich-go
-39. C:\Users\josep\AppData\Local\Programs\ExifTool *(installed version - fallback)*
+38. <Portable Programs Drive>\Files\Programs-Portable\immich-go
+39. C:\Users\<username>\AppData\Local\Programs\ExifTool *(installed version - fallback)*
 
 ## ExifTool Configuration
 
 Both ExifTool installations verified and working:
-- **Portable:** `D:\Files\Programs-Portable\ExifTool\exiftool.exe` - Version 13.41 ✓
-- **Installed:** `C:\Users\josep\AppData\Local\Programs\ExifTool\ExifTool.exe` - Version 13.41 ✓
+- **Portable:** `<Portable Programs Drive>\Files\Programs-Portable\ExifTool\exiftool.exe` - Version 13.41 ✓
+- **Installed:** `C:\Users\<username>\AppData\Local\Programs\ExifTool\ExifTool.exe` - Version 13.41 ✓
 - **Priority:** Portable version listed first in PATH, will be used by default
 
 ## Important Notes
@@ -110,7 +110,7 @@ This is **normal behavior** and **not a problem**. The cleanup successfully remo
 If you need to restore the original PATH:
 
 ```powershell
-[Environment]::SetEnvironmentVariable('Path', (Get-Content 'C:\Users\josep\Documents\dev\path-backup-2025-11-11-222945.txt'), 'User')
+[Environment]::SetEnvironmentVariable('Path', (Get-Content 'C:\Users\<username>\Documents\dev\path-backup-2025-11-11-222945.txt'), 'User')
 ```
 
 ## Files Created

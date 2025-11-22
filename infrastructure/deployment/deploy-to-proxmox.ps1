@@ -55,9 +55,9 @@ $DeploymentMap = @{
         "infrastructure/proxmox/lxc-utils.sh",
         "infrastructure/proxmox/upgrade-debian.sh",
         "infrastructure/proxmox/proxmox-setup-repos.sh",
-        "infrastructure/proxmox/zfs-replicate-pbs.sh",
-        "infrastructure/proxmox/rsync-pbs-to-synology.sh",
-        "infrastructure/proxmox/synology-auto-backup.sh",
+        "infrastructure/backup/scripts/zfs-replicate-pbs.sh",
+        "infrastructure/backup/scripts/rsync-pbs-to-synology.sh",
+        "infrastructure/backup/scripts/synology-auto-backup.sh",
         "infrastructure/network/wake-on-lan/wake-servers.sh"
     )
     "intel-n6005" = @(

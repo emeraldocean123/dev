@@ -28,7 +28,7 @@ wsl --unregister Debian-CasaOS
 2. Auto-generated Debian profile (from WSL) - **Removed**
 3. Debian-CasaOS profile - **Removed**
 
-**File:** `C:\Users\josep\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`
+**File:** `<Windows Terminal Settings Path>`
 
 **Changes:**
 - Removed auto-generated duplicate Debian profile (GUID: `{75f9d99c-a71c-51d4-89bc-2ca201acaf93}`)
@@ -40,18 +40,18 @@ wsl --unregister Debian-CasaOS
 ### 3. Removed Unused Files
 
 **Deleted:**
-- `D:\WSL\Exports\debian-13-rootfs.tar.xz` (196 MB) - Unused Debian Trixie rootfs
-- `~/Documents/dev/shell-management/create-debian-casaos.ps1` - Obsolete CasaOS setup script
+- `<WSL Export Drive>:\WSL\Exports\debian-13-rootfs.tar.xz` (196 MB) - Unused Debian Trixie rootfs
+- `<Repository Root>/shell-management/create-debian-casaos.ps1` - Obsolete CasaOS setup script
 
 **Kept:**
-- `D:\WSL\Exports\debian-export.tar` (2.0 GB) - Backup of original Debian WSL (before move to D: drive)
+- `<WSL Export Drive>:\WSL\Exports\debian-export.tar` (2.0 GB) - Backup of original Debian WSL (before move to D: drive)
 
 ## Final WSL State
 
 **Active Distributions:**
 ```
 NAME              STATE      VERSION  LOCATION
-Debian            Running    2        D:\WSL\Debian\
+Debian            Running    2        <WSL Install Drive>:\WSL\Debian\
 docker-desktop    Running    2        (Docker Desktop managed)
 ```
 
@@ -89,7 +89,7 @@ docker-desktop    Running    2        (Docker Desktop managed)
 
 ## Notes
 
-1. **Debian WSL** is your primary Linux environment (located on D:\WSL\Debian\)
+1. **Debian WSL** is your primary Linux environment (located on <WSL Install Drive>:\WSL\Debian\)
 2. **docker-desktop** is managed by Docker Desktop - required for Immich
 3. Windows Terminal now shows only one Debian profile (no duplicates)
 4. Original Debian backup (debian-export.tar) kept for safety
@@ -97,9 +97,9 @@ docker-desktop    Running    2        (Docker Desktop managed)
 
 ## Related Documentation
 
-- WSL migration: `~/Documents/dev/shell-management/move-wsl-to-d-drive.ps1`
-- Immich installation: `~/Documents/dev/photos/immich-windows-install.md`
-- Shell configs: `~/Documents/dev/shell-management/shell-configs.md`
+- WSL migration: `<Repository Root>/shell-management/move-wsl-to-d-drive.ps1`
+- Immich installation: `<Repository Root>/media/services/immich/docs/immich-windows-install.md`
+- Shell configs: `<Repository Root>/shell-management/shell-configs.md`
 
 ## Verification Commands
 

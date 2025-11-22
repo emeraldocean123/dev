@@ -8,7 +8,7 @@ param(
 )
 
 # Import shared utilities
-$libPath = Join-Path $PSScriptRoot "../../../lib/utils.ps1"
+$libPath = Join-Path $PSScriptRoot "../../lib/utils.ps1"
 if (Test-Path $libPath) {
     . $libPath
 } else {

@@ -14,7 +14,7 @@ mpv.net's bundled `libmpv-2.dll` may not have been compiled with libheif support
 
 ## Configuration Applied
 
-Added to `~/AppData/Roaming/mpv.net/mpv.conf`:
+Added to `<mpv.net config directory>/mpv.conf`:
 
 ```ini
 # Enable image demuxer for additional formats
@@ -32,7 +32,7 @@ demuxer=lavf
 
 Try opening a HEIC file with mpv.net now:
 ```powershell
-& "C:\Users\josep\AppData\Local\Programs\mpv.net\mpvnet.exe" "path\to\file.heic"
+& "<mpv.net installation directory>\mpvnet.exe" "path\to\file.heic"
 ```
 
 ## Confirmed: mpv.net Cannot Open HEIC Files
@@ -64,11 +64,11 @@ The script `convert-heic-to-jpg.ps1` handles this correctly:
 
 ```powershell
 # Use the conversion script (preserves ALL metadata)
-cd ~/Documents/dev/applications/media-players/mpv
+cd <Repository Root>/media/clients/mpv
 .\convert-heic-to-jpg.ps1
 
 # Or for a specific folder:
-.\convert-heic-to-jpg.ps1 -Path "D:\Mylio\Photos" -Recursive
+.\convert-heic-to-jpg.ps1 -Path "<Mylio Library Root>/Photos" -Recursive
 ```
 
 **What gets preserved:**
@@ -148,6 +148,6 @@ If you want HEIC support in Windows Photos and File Explorer:
 
 ## Related Files
 
-- **MPV Config:** `~/AppData/Roaming/mpv.net/mpv.conf`
-- **mpv.net Location:** `~/AppData/Local/Programs/mpv.net/`
-- **HDR Guide:** `~/Documents/dev/applications/media-players/mpv/mpv-hdr-configuration.md`
+- **MPV Config:** `<mpv.net config directory>/mpv.conf`
+- **mpv.net Location:** `<mpv.net installation directory>/`
+- **HDR Guide:** `<Repository Root>/media/clients/mpv/mpv-hdr-configuration.md`

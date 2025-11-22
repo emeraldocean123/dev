@@ -5,7 +5,7 @@ This document outlines the profiles, settings, and themes for PowerShell, Debian
 ## PowerShell 7
 
 ### Profile
-- **Profile Path**: C:\Users\josep\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+- **Profile Path**: <User Documents Directory>/PowerShell/Microsoft.PowerShell_profile.ps1
 - **Status**: Custom profile loaded.
 - **Modules**: Oh My Posh, winfetch.
 - **Theme/Settings**: Oh My Posh with "jandedobbeleer" theme, winfetch on startup showing system info including local/public IPs.
@@ -20,7 +20,7 @@ This document outlines the profiles, settings, and themes for PowerShell, Debian
 - **Aliases**: Standard aliases for ls, git, navigation.
 - **PATH Additions**:
    - ~/bin
-   - Oh My Posh: /mnt/c/Users/josep/AppData/Local/Programs/oh-my-posh/bin
+   - Oh My Posh: /mnt/c/Users/<username>/AppData/Local/Programs/oh-my-posh/bin
 
 ### Theme
 - **Prompt**: Oh My Posh with "jandedobbeleer" theme.
@@ -35,7 +35,7 @@ This document outlines the profiles, settings, and themes for PowerShell, Debian
 - Similar to WSL.
 - **PATH Additions**:
    - ~/bin
-   - Oh My Posh: /c/Users/josep/AppData/Local/Programs/oh-my-posh/bin
+   - Oh My Posh: /c/Users/<username>/AppData/Local/Programs/oh-my-posh/bin
 
 ### Theme
 - **Prompt**: Oh My Posh with "jandedobbeleer" theme.

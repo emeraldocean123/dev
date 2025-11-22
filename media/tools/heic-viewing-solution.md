@@ -27,7 +27,7 @@ Original HEIC files in Mylio display correctly in XnView MP with auto-rotation w
 ### Attempted Conversion (Failed)
 
 **Problem discovered:**
-- Original HEIC files in D:\Mylio: Correct orientation
+- Original HEIC files in <Mylio Library Root>: Correct orientation
 - Converted JPG files: Rotated incorrectly
 - ImageMagick conversion didn't properly handle EXIF orientation
 - Result: All 4,617 converted JPGs were rotated wrong
@@ -44,8 +44,8 @@ Original HEIC files in Mylio display correctly in XnView MP with auto-rotation w
 **Cleanup performed:**
 - Deleted: 9,234 files (4,617 HEIC + 4,617 JPG)
 - Space freed: 27.68 GB
-- Folder removed: `C:\Users\josep\Documents\heic-staging`
-- Original HEIC in D:\Mylio: ✅ Preserved and untouched
+- Folder removed: `<User Documents Directory>/heic-staging`
+- Original HEIC in <Mylio Library Root>: ✅ Preserved and untouched
 
 ## Configuration
 
@@ -97,7 +97,7 @@ Alt+r set video-rotate 0                               # Reset rotation
 ### Viewing HEIC Photos
 
 1. Open XnView MP
-2. Navigate to `D:\Mylio` in Browser mode
+2. Navigate to `<Mylio Library Root>` in Browser mode
 3. Browse thumbnails or open images
 4. Use `LEFT`/`RIGHT` to navigate
 5. Press `SPACE` for slideshow
@@ -113,21 +113,21 @@ Alt+r set video-rotate 0                               # Reset rotation
 ## File Locations
 
 ### HEIC Files
-- **Original:** `D:\Mylio\` (4,617 HEIC files, 9.17 GB)
+- **Original:** `<Mylio Library Root>\` (4,617 HEIC files, 9.17 GB)
 - **Status:** Untouched, correct orientation
 - **Viewer:** XnView MP
 
 ### Conversion Scripts (Preserved)
-- `~/Documents/dev/applications/media-players/mpv/find-and-stage-heic-files.ps1`
-- `~/Documents/dev/applications/media-players/mpv/convert-staged-heic-files.ps1`
-- `~/Documents/dev/applications/media-players/mpv/cleanup-heic-staging.ps1`
+- `<Repository Root>/media/clients/mpv/heic-conversion/find-and-stage-heic-files.ps1`
+- `<Repository Root>/media/clients/mpv/heic-conversion/convert-staged-heic-files.ps1`
+- `<Repository Root>/media/clients/mpv/heic-conversion/cleanup-heic-staging.ps1`
 - **Note:** Scripts preserved for reference, but not needed
 
 ### Documentation
-- `~/Documents/dev/applications/media-players/heic-viewing-solution.md` (this file)
-- `~/Documents/dev/applications/media-players/xnview/xnview-mpv-keybindings.md`
-- `~/Documents/dev/applications/media-players/auto-rotation-configuration.md`
-- `~/Documents/dev/applications/media-players/mpv/heic-support-workaround.md`
+- `<Repository Root>/media/tools/heic-viewing-solution.md` (this file)
+- `<Repository Root>/media/clients/xnview/xnview-mpv-keybindings.md`
+- `<Repository Root>/media/tools/auto-rotation-configuration.md`
+- `<Repository Root>/media/clients/mpv/heic-support-workaround.md`
 
 ## Why XnView MP is Better for HEIC
 
@@ -221,12 +221,12 @@ Alt+r set video-rotate 0                               # Reset rotation
 - ✅ This summary: `heic-viewing-solution.md`
 
 ### Files Deleted
-- ❌ Staging folder: `~/Documents/heic-staging/` (entire folder removed)
+- ❌ Staging folder: `<User Documents Directory>/heic-staging/` (entire folder removed)
 - ❌ All converted JPG files (4,617 files, 18.51 GB)
 - ❌ All staged HEIC copies (4,617 files, 9.17 GB)
 
 ### Files Preserved
-- ✅ Original HEIC in Mylio: `D:\Mylio\` (untouched)
+- ✅ Original HEIC in Mylio: `<Mylio Library Root>\` (untouched)
 - ✅ Conversion scripts (for reference)
 - ✅ All documentation
 

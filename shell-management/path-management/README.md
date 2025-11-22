@@ -3,7 +3,7 @@
 PowerShell scripts for analyzing, cleaning, and managing the Windows PATH environment variable.
 
 **Created:** November 11, 2025
-**Location:** `~/Documents/dev/shell-management/path-management/`
+**Location:** `<Repository Root>/shell-management/path-management/`
 
 ## Overview
 
@@ -27,7 +27,7 @@ These scripts help maintain a clean Windows PATH by identifying and removing:
 
 **Usage:**
 ```powershell
-cd ~/Documents/dev/shell-management/path-management
+cd <Repository Root>/shell-management/path-management
 ./check-path.ps1
 ```
 
@@ -51,7 +51,7 @@ cd ~/Documents/dev/shell-management/path-management
 
 **Usage:**
 ```powershell
-cd ~/Documents/dev/shell-management/path-management
+cd <Repository Root>/shell-management/path-management
 ./apply-cleaned-path.ps1
 ```
 
@@ -70,7 +70,7 @@ cd ~/Documents/dev/shell-management/path-management
 
 **Usage:**
 ```powershell
-cd ~/Documents/dev/shell-management/path-management
+cd <Repository Root>/shell-management/path-management
 ./apply-cleaned-path-auto.ps1
 ```
 
@@ -94,7 +94,7 @@ cd ~/Documents/dev/shell-management/path-management
 
 1. **Analyze current PATH:**
    ```powershell
-   cd ~/Documents/dev/shell-management/path-management
+   cd <Repository Root>/shell-management/path-management
    ./check-path.ps1
    ```
 
@@ -147,7 +147,7 @@ Every time you apply changes, a timestamped backup is created:
 To restore a previous PATH from backup:
 
 ```powershell
-[Environment]::SetEnvironmentVariable('Path', (Get-Content 'C:\Users\josep\Documents\dev\shell-management\path-management\path-backup-YYYY-MM-DD-HHmmss.txt'), 'User')
+[Environment]::SetEnvironmentVariable('Path', (Get-Content '<Repository Root>/shell-management/path-management/path-backup-YYYY-MM-DD-HHmmss.txt'), 'User')
 ```
 
 Replace the timestamp with your specific backup file.
@@ -203,6 +203,6 @@ npm --version
 
 ## See Also
 
-- **Shell configs:** `~/Documents/dev/shell-management/configs/`
-- **PowerShell profile:** `~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`
-- **PowerShell scripts:** `~/Documents/PowerShell/Scripts/`
+- **Shell configs:** `<Repository Root>/shell-management/configs/`
+- **PowerShell profile:** `<User Documents Directory>/PowerShell/Microsoft.PowerShell_profile.ps1`
+- **PowerShell scripts:** `<User Documents Directory>/PowerShell/Scripts/`

@@ -8,7 +8,7 @@ if (Test-Path $libPath) {
 } else {
     Write-Console "WARNING: Could not find shared library at $libPath" -ForegroundColor Yellow
     # Fallback: simple Write-Console function
-    function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
+    function Write-Console { param($Message, $ForegroundColor) Write-Host $Message -ForegroundColor $ForegroundColor }
 }
 
 Write-Console "`n========================================" -ForegroundColor Cyan
@@ -27,14 +27,15 @@ if (-not $isAdmin) {
 $currentPath = [Environment]::GetEnvironmentVariable('Path', 'User')
 Write-Console "Current USER PATH has $($currentPath.Split(';').Count) entries" -ForegroundColor White
 
+$devRoot = Resolve-Path (Join-Path $PSScriptRoot "../../../../")
 # Backup current PATH
-$backupFile = "C:\Users\josep\Documents\dev\path-backup-$(Get-Date -Format 'yyyy-MM-dd-HHmmss').txt"
+$backupFile = Join-Path $devRoot "path-backup-$(Get-Date -Format 'yyyy-MM-dd-HHmmss').txt"
 $currentPath | Out-File -FilePath $backupFile -Encoding UTF8
 Write-Console "Current PATH backed up to:" -ForegroundColor Green
 Write-Console "  $backupFile" -ForegroundColor Cyan
 
 # Load cleaned PATH
-$cleanedFile = "C:\Users\josep\Documents\dev\cleaned-path.txt"
+$cleanedFile = Join-Path $devRoot "cleaned-path.txt"
 if (!(Test-Path $cleanedFile)) {
     Write-Console "`nERROR: Cleaned PATH file not found: $cleanedFile" -ForegroundColor Red
     exit 1

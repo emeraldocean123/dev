@@ -124,32 +124,32 @@ Quick reference guide to all tool folders and their purposes. Every tool folder 
 ### By Task
 
 **Backup Management:**
-- C:\Users\josep\Documents\dev\backup\rtc-wake
-- C:\Users\josep\Documents\dev\backup\synology-tools
-- C:\Users\josep\Documents\dev\backup\wake-on-lan\wake-servers
-- C:\Users\josep\Documents\dev\applications\immich\backup
+- <Repository Root>\backup\rtc-wake
+- <Repository Root>\backup\synology-tools
+- <Repository Root>\backup\wake-on-lan\wake-servers
+- <Repository Root>\applications\immich\backup
 
 **Photo Management:**
-- C:\Users\josep\Documents\dev\applications\immich\control
-- C:\Users\josep\Documents\dev\applications\immich\mylio-import
-- C:\Users\josep\Documents\dev\applications\digikam
-- C:\Users\josep\Documents\dev\photos
+- <Repository Root>\applications\immich\control
+- <Repository Root>\applications\immich\mylio-import
+- <Repository Root>\applications\digikam
+- <Repository Root>\photos
 
 **System Diagnostics:**
-- C:\Users\josep\Documents\dev\hardware\caldigit-diagnostics
-- C:\Users\josep\Documents\dev\hardware\network-priority
-- C:\Users\josep\Documents\dev\hardware\system-diagnostics
-- C:\Users\josep\Documents\dev\network\scripts\ethernet-tools
+- <Repository Root>\hardware\caldigit-diagnostics
+- <Repository Root>\hardware\network-priority
+- <Repository Root>\hardware\system-diagnostics
+- <Repository Root>\network\scripts\ethernet-tools
 
 **Media Playback:**
-- C:\Users\josep\Documents\dev\applications\media-players\mpv
-- C:\Users\josep\Documents\dev\applications\media-players\xnview
-- C:\Users\josep\Documents\dev\applications\media-players\codec-tools
+- <Repository Root>\applications\media-players\mpv
+- <Repository Root>\applications\media-players\xnview
+- <Repository Root>\applications\media-players\codec-tools
 
 **Shell & Environment:**
-- C:\Users\josep\Documents\dev\shell-management\shell-backup
-- C:\Users\josep\Documents\dev\shell-management\path-management\path-cleanup
-- C:\Users\josep\Documents\dev\shell-management\wsl-management
+- <Repository Root>\shell-management\shell-backup
+- <Repository Root>\shell-management\path-management\path-cleanup
+- <Repository Root>\shell-management\wsl-management
 
 ---
 
@@ -162,7 +162,7 @@ To use any tool:
 
 Example:
 ```powershell
-cd ~/Documents/dev/applications/immich/control
+cd <Repository Root>/applications/immich/control
 cat README.md
 ./start-immich.ps1
 ```
@@ -171,7 +171,7 @@ cat README.md
 
 ## Documentation
 
-- **Full reorganization details:** ~/Documents/dev/documentation/audits/script-reorganization-2025-11-18.md
+- **Full reorganization details:** <Repository Root>/documentation/audits/script-reorganization-2025-11-18.md
 - **Naming conventions:** All tool folders use kebab-case
 - **Maximum depth:** 3 levels (dev > category > tool)
 - **README format:** Every tool folder has comprehensive README.md

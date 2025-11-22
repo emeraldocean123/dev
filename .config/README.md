@@ -45,7 +45,7 @@ If you're setting up this repository for the first time:
 
 ```powershell
 # 1. Copy the example template
-cd ~/Documents/git/dev/.config
+cd <Repository Root>/.config
 cp homelab.settings.example.json homelab.settings.json
 
 # 2. Edit with your real values
@@ -70,7 +70,7 @@ git status
                 "User": "root",
                 "Mac": "00:00:00:00:00:00",
                 "Role": "Primary Proxmox VE host",
-                "ScriptPath": "/root/sh/"
+                "ScriptPath": "<Script Deployment Root>/"
             },
             "Secondary": { ... },
             "NAS": { ... }
@@ -82,7 +82,7 @@ git status
         }
     },
     "Paths": {
-        "DevRoot": "C:\\Users\\josep\\Documents\\git\\dev",
+        "DevRoot": "C:\\Users\\<username>\\Documents\\git\\dev",
         "MylioCatalog": "D:\\Mylio\\Pictures",
         "ImmichLibrary": "D:\\Immich\\library",
         "MediaWorkspace": "D:\\Media Workspace"
@@ -135,7 +135,7 @@ Bash scripts on Proxmox hosts will use a lightweight config parser:
 
 ```bash
 # Load configuration (planned for Phase 5.1)
-source /root/sh/lib/load-config.sh
+source <Script Deployment Root>/lib/load-config.sh
 PRIMARY_IP=$(get_config "Network.Hosts.Primary.IP")
 ```
 
@@ -226,7 +226,7 @@ Scripts currently using hardcoded values should be refactored to use the central
 **Before:**
 ```powershell
 $primaryHost = "192.168.1.40"
-$devRoot = "C:\Users\josep\Documents\git\dev"
+$devRoot = "C:\Users\<username>\Documents\git\dev"
 ```
 
 **After:**
@@ -327,7 +327,7 @@ Create lightweight bash config parser for Proxmox scripts:
 ```bash
 # /root/sh/lib/load-config.sh
 get_config() {
-    jq -r "$1" < /root/sh/.config/homelab.settings.json
+    jq -r "$1" < <Script Deployment Root>/.config/homelab.settings.json
 }
 ```
 

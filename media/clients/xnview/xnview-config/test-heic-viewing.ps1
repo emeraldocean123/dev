@@ -8,11 +8,36 @@ if (Test-Path $libPath) {
 } else {
     Write-Console "WARNING: Could not find shared library at $libPath" -ForegroundColor Yellow
     # Fallback: simple Write-Console function
-    function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
+    function Write-Console { param($Message, $ForegroundColor) Write-Host $Message -ForegroundColor $ForegroundColor }
 }
 
-$xnviewPath = "C:\Program Files\XnViewMP\xnviewmp.exe"
-$heicTestFile = "C:\Users\josep\Documents\heic-staging\Folder-Follett-2018--12--Decem-2018-12-02-21.heic"
+$devRoot = Resolve-Path (Join-Path $PSScriptRoot "../../../../")
+
+# Dynamic XnViewMP path
+$xnviewPath = $null
+$programFiles = [Environment]::GetFolderPath('ProgramFiles')
+$programFilesX86 = [Environment]::GetFolderPath('ProgramFilesX86')
+
+$possibleXnViewPaths = @(
+    (Join-Path $programFiles "XnViewMP\xnviewmp.exe"),
+    (Join-Path $programFilesX86 "XnViewMP\xnviewmp.exe")
+)
+
+foreach ($path in $possibleXnViewPaths) {
+    if (Test-Path $path) {
+        $xnviewPath = $path
+        break
+    }
+}
+
+if (-not $xnviewPath) {
+    # Fallback to hardcoded if not found, but it will be flagged
+    $xnviewPath = "C:\Program Files\XnViewMP\xnviewmp.exe"
+    Write-Console "WARNING: XnView MP not found in common Program Files. Using fallback path: $xnviewPath" -ForegroundColor Yellow
+}
+
+$heicStagingFolder = Join-Path ([Environment]::GetFolderPath('MyDocuments')) "heic-staging"
+$heicTestFile = Join-Path $heicStagingFolder "Folder-Follett-2018--12--Decem-2018-12-02-21.heic"
 
 Write-Console "`n========================================" -ForegroundColor Cyan
 Write-Console "  XnView MP HEIC Support Test" -ForegroundColor Cyan
@@ -38,7 +63,7 @@ if (Test-Path $heicTestFile) {
     Write-Console "  Date: $($file.LastWriteTime)" -ForegroundColor Gray
 } else {
     Write-Console "  ⚠️ Test file not found, using first HEIC from staging..." -ForegroundColor Yellow
-    $heicTestFile = Get-ChildItem "C:\Users\josep\Documents\heic-staging\*.heic" | Select-Object -First 1 | Select-Object -ExpandProperty FullName
+    $heicTestFile = Get-ChildItem (Join-Path $heicStagingFolder "*.heic") | Select-Object -First 1 | Select-Object -ExpandProperty FullName
 
     if ($heicTestFile) {
         Write-Console "  Using: $heicTestFile" -ForegroundColor Cyan

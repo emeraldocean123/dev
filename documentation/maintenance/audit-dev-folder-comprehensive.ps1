@@ -7,7 +7,7 @@ param(
 )
 
 # Import shared utilities
-$libPath = Join-Path $PSScriptRoot "../../../lib/utils.ps1"
+$libPath = Join-Path $PSScriptRoot "../../lib/utils.ps1"
 if (Test-Path $libPath) {
     . $libPath
 } else {
@@ -15,30 +15,10 @@ if (Test-Path $libPath) {
     # Fallback: simple Write-Console function
     function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
 }
-function Write-Console {
-    param(
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [object[]]$Object,
-        [System.ConsoleColor]$ForegroundColor = [System.ConsoleColor]::Gray
-    )
 
-    $message = ($Object -join ' ')
-    if ($Host.UI -and $Host.UI.RawUI) {
-        $rawUI = $Host.UI.RawUI
-        $previous = $rawUI.ForegroundColor
-        try {
-            $rawUI.ForegroundColor = $ForegroundColor
-            Write-Information -MessageData $message -InformationAction Continue
-        } finally {
-            $rawUI.ForegroundColor = $previous
-        }
-    } else {
-        Write-Information -MessageData $message -InformationAction Continue
-    }
-}
 
-$devPath = "C:\Users\josep\Documents\dev"
-$reportPath = "C:\Users\josep\Documents\dev\documentation\audits\dev-folder-audit-2025-11-13.md"
+$devPath = $devRoot.Path
+$reportPath = Join-Path $devRoot "documentation\audits\dev-folder-audit-$(Get-Date -Format 'yyyy-MM-dd').md"
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 Write-Console "=== Dev Folder Comprehensive Audit ===" -ForegroundColor Cyan

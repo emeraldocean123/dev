@@ -1,7 +1,7 @@
 # System Cleanup Audit - November 13, 2025
 
 - **Date**: November 13, 2025
-- **Scope**: Complete user profile, Documents, and `~/Documents/dev` cleanup after
+- **Scope**: Complete user profile, Documents, and `<User Documents Directory>/dev` cleanup after
   the Docker/Immich migration.
 - **Result**: ~308 MB freed with every folder aligned to the documented conventions.
 
@@ -12,7 +12,7 @@
 Performed a full sweep of local working directories immediately after relocating
 Docker Desktop and Immich workloads from `C:` to `D:`. Temp folders, migration
 leftovers, and stray backups were removed, and every directory under
-`~/Documents` was verified to be categorized, free of loose artifacts, and compliant
+`<User Documents Directory>` was verified to be categorized, free of loose artifacts, and compliant
 with the kebab-case naming policy.
 
 ---
@@ -21,14 +21,14 @@ with the kebab-case naming policy.
 
 ### 1. Immich Migration Cleanup (Previously Completed)
 
-- **Location**: `C:\Users\josep\Documents\dev\applications\immich\`
-- **Action**: Removed legacy tree after content was moved to `D:\Immich`
+- **Location**: `C:\Users\<username>\Documents\dev\applications\immich\`
+- **Action**: Removed legacy tree after content was moved to `<Immich Storage Drive>:\Immich`
 - **Space Freed**: 240 MB
 - **Status**: Complete
 
 ### 2. Docker Temp Files Cleanup
 
-- **Location**: `C:\Users\josep\AppData\Local\Docker` and linked temp folders
+- **Location**: `C:\Users\<username>\AppData\Local\Docker` and linked temp folders
 - **Action**: Deleted stale extraction artifacts left by previous engine versions
 - **Space Freed**: 20 MB
 - **Remaining**: 29 MB of active Docker log files (locked while Docker is running)
@@ -36,7 +36,7 @@ with the kebab-case naming policy.
 
 ### 3. Windows Temp Folder Cleanup
 
-- **Location**: `C:\Users\josep\AppData\Local\Temp\`
+- **Location**: `C:\Users\<username>\AppData\Local\Temp\`
 - **Before**: 540 MB
 - **After**: 492 MB
 - **Space Freed**: 48 MB
@@ -52,7 +52,7 @@ with the kebab-case naming policy.
 
 ## Folder Organization Audit
 
-### Documents Root (`~/Documents/`)
+### Documents Root (`<User Documents Directory>/`)
 
 **Status**: Clean — no loose files present.
 
@@ -67,7 +67,7 @@ Documents/
 └── WindowsPowerShell/         (<1 KB - PowerShell Gallery metadata only)
 ```
 
-### Dev Folder (`~/Documents/dev/`)
+### Dev Folder (`<User Documents Directory>/dev/`)
 
 **Status**: Clean — zero files at the root; all projects categorized.
 
@@ -102,14 +102,14 @@ dev/
 
 ### PowerShell Folders
 
-**PowerShell 7** (`~/Documents/PowerShell/`):
+**PowerShell 7** (`<User Documents Directory>/PowerShell/`):
 
 - Active profile: `Microsoft.PowerShell_profile.ps1`
 - Oh My Posh theme: `jandedobbeleer.omp.json`
 - Scripts folder: `Update-ClaudeDate`, `winfetch`, and `add-exiftool-to-path`
 - Modules folder: current PS modules only
 
-**Windows PowerShell** (`~/Documents/WindowsPowerShell/`):
+**Windows PowerShell** (`<User Documents Directory>/WindowsPowerShell/`):
 
 - Status: Minimal / legacy
 - Contents: `InstalledScriptInfos` metadata only
@@ -119,13 +119,13 @@ dev/
 
 ## Shell Config Backup Status
 
-### Current Backups (`~/Documents/dev/shell-management/configs/shell-backups/`)
+### Current Backups (`<User Documents Directory>/dev/shell-management/configs/shell-backups/`)
 
 - `bashrc.gitbash` (latest)
 - `bashrc.wsl-debian` (latest)
 - `Microsoft.PowerShell_profile.ps1` (latest)
 
-### Archived Backups (`~/Documents/dev/shell-management/configs/shell-backups/archive/`)
+### Archived Backups (`<User Documents Directory>/dev/shell-management/configs/shell-backups/archive/`)
 
 - `bashrc.gitbash.20251011_152434`
 - `bashrc.wsl-debian.20251011_152434`

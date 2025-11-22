@@ -10,11 +10,11 @@ When playing HDR videos in mpv.net, colors appeared distorted/oversaturated beca
 
 ## Solution
 
-Updated `~/AppData/Roaming/mpv.net/mpv.conf` with proper HDR tone mapping and color management.
+Updated `<mpv.net config directory>/mpv.conf` with proper HDR tone mapping and color management.
 
 ## Configuration Location
 
-**File:** `C:\Users\josep\AppData\Roaming\mpv.net\mpv.conf`
+**File:** `<mpv.net config directory>/mpv.conf`
 
 ## Key HDR Settings Explained
 
@@ -175,15 +175,15 @@ Original config backed up to: `mpv.conf.backup` (if you need to revert)
 ## Test Videos
 
 Good HDR test sources:
-- Your converted HDR videos in `D:\Mylio`
+- Your converted HDR videos in `<Mylio Library Root>`
 - YouTube HDR content (if using yt-dlp)
 - 4K HDR movie trailers
 
 ## Related Files
 
-- **Config file:** `~/AppData/Roaming/mpv.net/mpv.conf`
-- **Input bindings:** `~/AppData/Roaming/mpv.net/input.conf`
-- **Installation script:** `~/Documents/dev/applications/media-players/mpv/install-mpv.ps1`
+- **Config file:** `<mpv.net config directory>/mpv.conf`
+- **Input bindings:** `<mpv.net config directory>/input.conf`
+- **Installation script:** `<Repository Root>/media/clients/mpv/install-mpv.ps1`
 
 ## References
 

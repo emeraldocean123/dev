@@ -3,14 +3,13 @@
 # and copies them to a staging folder for safe conversion (leaving Mylio intact)
 
 # Import shared utilities
-$libPath = Join-Path $PSScriptRoot "../../../../lib/utils.ps1"
+$libPath = Join-Path $PSScriptRoot "../../../lib/utils.ps1"
 if (Test-Path $libPath) {
     . $libPath
 } else {
     Write-Console "WARNING: Could not find shared library at $libPath" -ForegroundColor Yellow
-    # Fallback: simple Write-Console function
-    function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
-}
+        # Fallback: simple Write-Console function
+        function Write-Console { param($Message, $ForegroundColor) Write-Host $Message -ForegroundColor $ForegroundColor }}
 
 Write-Console "`n========================================" -ForegroundColor Cyan
 Write-Console "  HEIC File Staging for Conversion" -ForegroundColor Cyan
@@ -20,16 +19,16 @@ Write-Console "========================================`n" -ForegroundColor Cyan
 Write-Console "[1/5] Searching for Mylio folder..." -ForegroundColor Yellow
 
 $searchPaths = @(
-    'C:\Users\josep\Pictures\Mylio',
-    'C:\Users\josep\Documents\Mylio',
-    'C:\Users\josep\OneDrive\Pictures\Mylio',
-    'D:\Mylio',
-    'D:\Pictures\Mylio',
-    'E:\Mylio',
-    'E:\Pictures\Mylio',
-    'F:\Mylio',
-    'F:\Pictures\Mylio'
+    (Join-Path ([Environment]::GetFolderPath('UserProfile')) "Pictures\Mylio"),
+    (Join-Path ([Environment]::GetFolderPath('UserProfile')) "Documents\Mylio"),
+    (Join-Path ([Environment]::GetFolderPath('UserProfile')) "OneDrive\Pictures\Mylio")
 )
+
+# Add common drive roots for Mylio
+Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Name -match '^[D-Z]$' } | ForEach-Object {
+    $searchPaths += Join-Path $_.Root 'Mylio'
+    $searchPaths += Join-Path $_.Root 'Pictures\Mylio'
+}
 
 $mylioPath = $null
 foreach ($path in $searchPaths) {
@@ -114,7 +113,7 @@ if ($filesByDir.Count -gt 10) {
 # Step 4: Create staging folder
 Write-Console "`n[4/5] Creating staging folder..." -ForegroundColor Yellow
 
-$stagingFolder = Join-Path $env:USERPROFILE "Documents\heic-staging"
+$stagingFolder = Join-Path ([Environment]::GetFolderPath('MyDocuments')) "heic-staging"
 if (-not (Test-Path $stagingFolder)) {
     New-Item -Path $stagingFolder -ItemType Directory -Force | Out-Null
     Write-Console "  Created: $stagingFolder" -ForegroundColor Green

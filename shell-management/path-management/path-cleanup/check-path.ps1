@@ -7,11 +7,13 @@ if (Test-Path $libPath) {
 } else {
     Write-Console "WARNING: Could not find shared library at $libPath" -ForegroundColor Yellow
     # Fallback: simple Write-Console function
-    function Write-Console { param($Message, $ForegroundColor) Write-Console $Message -ForegroundColor $ForegroundColor }
+    function Write-Console { param($Message, $ForegroundColor) Write-Host $Message -ForegroundColor $ForegroundColor }
 }
 Write-Console "`n========================================" -ForegroundColor Cyan
 Write-Console "  Windows PATH Analysis" -ForegroundColor Cyan
 Write-Console "========================================`n" -ForegroundColor Cyan
+
+$devRoot = Resolve-Path (Join-Path $PSScriptRoot "../../../../")
 
 # Get all PATH entries
 $paths = $env:Path -split ';'
@@ -95,7 +97,7 @@ if ($duplicates.Count -gt 0 -or $orphaned.Count -gt 0) {
     Write-Console "Total entries after cleanup: $($cleanPaths.Count)" -ForegroundColor Green
 
     # Save to file
-    $outputFile = "C:\Users\josep\Documents\dev\cleaned-path.txt"
+    $outputFile = Join-Path $devRoot "cleaned-path.txt"
     $cleanedPath | Out-File -FilePath $outputFile -Encoding UTF8
     Write-Console "`nCleaned PATH saved to: $outputFile" -ForegroundColor Cyan
 

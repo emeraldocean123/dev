@@ -12,7 +12,7 @@ Automated health monitoring and reporting for your homelab infrastructure.
 ### Generate Report
 
 ```powershell
-cd ~/Documents/git/dev/documentation/reports
+cd <Repository Root>/documentation/reports
 ./generate-health-report.ps1
 ```
 
@@ -56,7 +56,7 @@ Create a scheduled task to run daily:
 
 ```powershell
 $action = New-ScheduledTaskAction -Execute "pwsh.exe" `
-    -Argument "-NoProfile -File C:\Users\josep\Documents\git\dev\documentation\reports\generate-health-report.ps1"
+    -Argument "-NoProfile -File <Repository Root>/documentation/reports/generate-health-report.ps1"
 
 $trigger = New-ScheduledTaskTrigger -Daily -At "8:00AM"
 
@@ -80,7 +80,7 @@ Combine with other monitoring tools:
 
 ```powershell
 # Morning routine script
-cd ~/Documents/git/dev
+cd <Repository Root>
 
 # Generate report
 ./documentation/reports/generate-health-report.ps1 -OpenAfter

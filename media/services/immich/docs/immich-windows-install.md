@@ -10,7 +10,7 @@ Immich is installed on Windows 11 using Docker Desktop with the official docker-
 
 ## Installation Directory
 
-**Location:** `C:\Users\josep\Documents\dev\applications\immich\`
+**Location:** `<Repository Root>/media/services/immich/`
 
 **Files:**
 - `docker-compose.yml` - Immich service configuration
@@ -57,7 +57,7 @@ The installation includes 4 containers:
 
 ### External Library (Planned)
 Once photo organization is complete, an external library will be configured:
-- **Photos Location:** D:\[photo-folder-name] (to be determined)
+- **Photos Location:** <External Storage Drive>:\<photo-folder-name> (to be determined)
 - **Mount Point:** Will be added to docker-compose.yml as additional volume
 - **Access Mode:** Read-only to protect originals
 - **Format:** External library (photos stay on Windows NTFS, accessed via `/mnt/d/`)
@@ -70,38 +70,38 @@ Once photo organization is complete, an external library will be configured:
 
 **Start Immich:**
 ```bash
-cd ~/Documents/dev/applications/immich
+cd <Repository Root>/media/services/immich
 docker compose up -d
 ```
 
 **Stop Immich:**
 ```bash
-cd ~/Documents/dev/applications/immich
+cd <Repository Root>/media/services/immich
 docker compose down
 ```
 
 **View Logs:**
 ```bash
-cd ~/Documents/dev/applications/immich
+cd <Repository Root>/media/services/immich
 docker compose logs -f
 ```
 
 **Update Immich:**
 ```bash
-cd ~/Documents/dev/applications/immich
+cd <Repository Root>/media/services/immich
 docker compose pull
 docker compose up -d
 ```
 
 **Backup Database:**
 ```bash
-cd ~/Documents/dev/applications/immich
+cd <Repository Root>/media/services/immich
 docker compose exec -T database pg_dumpall -c -U postgres > immich-backup-$(date +%Y%m%d).sql
 ```
 
 **Restore Database:**
 ```bash
-cd ~/Documents/dev/applications/immich
+cd <Repository Root>/media/services/immich
 cat immich-backup-YYYYMMDD.sql | docker compose exec -T database psql -U postgres
 ```
 
@@ -129,7 +129,7 @@ For faster facial recognition and object detection:
 **User's Workflow:**
 1. Export photos from Mylio to new folder on D: drive
 2. Clean up and organize with PhotoMove app
-3. Determine final folder path (e.g., D:\Immich-Library\)
+3. Determine final folder path (e.g., <External Storage Drive>:\Immich-Library\)
 
 **Configuration Steps (After User Organizes Photos):**
 1. Add volume mount to docker-compose.yml:
@@ -164,7 +164,7 @@ docker compose logs [service-name]
 **Out of space:**
 - Check WSL disk usage: `docker system df`
 - Clean up old images: `docker system prune`
-- If needed, expand WSL VHDX (script available: `expand-wsl-disk.ps1`)
+- If needed, expand WSL VHDX (script available: `<Repository Root>/shell-management/wsl-management/expand-wsl-disk.ps1`)
 
 ## Documentation References
 
@@ -176,9 +176,9 @@ docker compose logs [service-name]
 
 ## Related Files
 
-- Photo architecture: `~/Documents/dev/photos/photo-vault-architecture.md`
-- Hardware transcoding config: `~/Documents/dev/photos/immich-hardware-transcoding.md`
-- Mylio scripts: `~/Documents/dev/photos/mylio/`
+- Photo architecture: `<Repository Root>/media/photos/photo-vault-architecture.md`
+- Hardware transcoding config: `<Repository Root>/media/photos/immich-hardware-transcoding.md`
+- Mylio scripts: `<Repository Root>/media/clients/mylio/`
 
 ## Notes
 

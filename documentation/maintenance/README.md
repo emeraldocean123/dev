@@ -13,7 +13,7 @@ This directory contains the "Engine Room" of the `dev` repository. These tools e
 ```
 
 **Checks:**
-- ❌ **Hardcoded Paths:** Detects absolute paths like `C:\Users\josep` or `/home/josep` that break portability
+- ❌ **Hardcoded Paths:** Detects absolute paths like C:\\Users\\<username> or /home/<username> that break portability
 - ❌ **CRLF in Bash:** Ensures `.sh` files use LF line endings (critical for Linux)
 - ❌ **BOM in Bash:** Detects UTF-8 BOM headers that break Bash shebangs (`#!/bin/bash`)
 - ❌ **Empty Directories:** Identifies stale folder structures
@@ -60,7 +60,7 @@ Scripts for LXC and Proxmox management.
 
 ### Pre-Commit Checks (Recommended)
 ```powershell
-cd ~/Documents/git/dev
+cd <Repository Root>
 ./documentation/maintenance/lint-repository.ps1
 ```
 
