@@ -1,5 +1,5 @@
 # Repository Hygiene & Linting Audit
-# Checks for: Hardcoded paths, Mixed Line Endings, Trailing Whitespace, BOM issues
+# Checks for: Hardcoded paths, Hardcoded IPs, Mixed Line Endings, Trailing Whitespace, BOM issues
 # Location: documentation/maintenance/lint-repository.ps1
 
 
@@ -9,6 +9,7 @@ if (Test-Path $libPath) { . $libPath } else { Write-Host "WARNING: Utils not fou
 $devRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
 $issues = 0
 $hardcodedPaths = @()
+$hardcodedIPs = @()
 $crlfBashScripts = @()
 $bomBashScripts = @()
 $emptyDirs = @()
@@ -38,7 +39,31 @@ foreach ($file in $files) {
             }
         }
 
-        # 2. Bash Script Formatting Checks
+        # 2. Hardcoded IP Address Check (prevents configuration drift)
+        if ($file.Extension -eq ".ps1" -or $file.Extension -eq ".sh") {
+            # Exclude lib/, .config/, and documentation/ directories
+            if ($relPath -notlike "*lib/*" -and $relPath -notlike "*.config/*" -and $relPath -notlike "*documentation/*") {
+                # Match IPv4 addresses (e.g., 192.168.1.100)
+                $ipMatches = [regex]::Matches($content, '\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
+                if ($ipMatches.Count -gt 0) {
+                    # Check if any line with IP is NOT marked with # NO-LINT: IP-ALLOW
+                    $lines = $content -split "`n"
+                    $hasUnallowedIP = $false
+                    foreach ($line in $lines) {
+                        if ($line -match '\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b' -and $line -notmatch '# NO-LINT: IP-ALLOW') {
+                            $hasUnallowedIP = $true
+                            break
+                        }
+                    }
+                    if ($hasUnallowedIP) {
+                        $hardcodedIPs += $relPath
+                        $issues++
+                    }
+                }
+            }
+        }
+
+        # 3. Bash Script Formatting Checks
         if ($file.Extension -eq ".sh") {
             # CRLF check (critical - will break on Linux)
             if ($content -match "`r`n") {
@@ -78,7 +103,7 @@ foreach ($file in $files) {
     }
 }
 
-# 3. Empty Directories
+# 4. Empty Directories
 $allDirs = Get-ChildItem -Path $devRoot.Path -Recurse -Directory | Where-Object { $_.FullName -notlike "*\.git\*" }
 foreach ($dir in $allDirs) {
     $contents = Get-ChildItem $dir.FullName -ErrorAction SilentlyContinue
@@ -97,6 +122,15 @@ if ($hardcodedPaths.Count -gt 0) {
     foreach ($path in $hardcodedPaths) {
         Write-Host "  - $path" -ForegroundColor Red
     }
+}
+
+if ($hardcodedIPs.Count -gt 0) {
+    Write-Host "`n[CRITICAL] Hardcoded IP Addresses Found ($($hardcodedIPs.Count)):" -ForegroundColor Red
+    Write-Host "IP addresses should be read from .config/homelab.settings.json:" -ForegroundColor Gray
+    foreach ($path in $hardcodedIPs) {
+        Write-Host "  - $path" -ForegroundColor Red
+    }
+    Write-Host "  Exception: Add '# NO-LINT: IP-ALLOW' to the line to whitelist an IP" -ForegroundColor DarkGray
 }
 
 if ($crlfBashScripts.Count -gt 0) {
@@ -129,6 +163,7 @@ if ($issues -eq 0) {
 } else {
     Write-Host "Found $issues potential issues:" -ForegroundColor Yellow
     Write-Host "  - Hardcoded paths: $($hardcodedPaths.Count)" -ForegroundColor $(if ($hardcodedPaths.Count -gt 0) { "Red" } else { "Gray" })
+    Write-Host "  - Hardcoded IPs: $($hardcodedIPs.Count)" -ForegroundColor $(if ($hardcodedIPs.Count -gt 0) { "Red" } else { "Gray" })
     Write-Host "  - CRLF in Bash: $($crlfBashScripts.Count)" -ForegroundColor $(if ($crlfBashScripts.Count -gt 0) { "Magenta" } else { "Gray" })
     Write-Host "  - BOM in Bash: $($bomBashScripts.Count)" -ForegroundColor $(if ($bomBashScripts.Count -gt 0) { "Yellow" } else { "Gray" })
     Write-Host "  - Empty directories: $($emptyDirs.Count)" -ForegroundColor $(if ($emptyDirs.Count -gt 0) { "DarkGray" } else { "Gray" })

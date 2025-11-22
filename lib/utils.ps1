@@ -5,6 +5,23 @@
 <#
 .SYNOPSIS
     Writes colored console output in a cross-platform compatible way.
+    Supports global file logging via $Global:LogFile variable.
+
+.DESCRIPTION
+    Enhanced console output with:
+    - Color support (cross-platform)
+    - Automatic file logging if $Global:LogFile is set
+    - ANSI code stripping for log files
+    - Timestamped log entries
+
+.EXAMPLE
+    # Enable logging for a script
+    $Global:LogFile = "C:\Logs\homelab.log"
+    Write-Console "Starting backup..." -ForegroundColor Green
+
+.NOTES
+    Set $Global:LogFile at script startup to enable persistent logging.
+    Log format: "yyyy-MM-dd HH:mm:ss | Message"
 #>
 function Write-Console {
     param(
@@ -14,6 +31,29 @@ function Write-Console {
         [System.ConsoleColor]$BackgroundColor,
         [switch]$NoNewline
     )
+
+    # Global file logging support (enterprise-grade audit trail)
+    if ($Global:LogFile -and $Message) {
+        try {
+            $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+            # Strip ANSI color codes and control characters for clean logs
+            $cleanMessage = $Message -replace "\e\[[0-9;]*m", "" -replace "`r", "" -replace "`n", " "
+            $logEntry = "$timestamp | $cleanMessage"
+
+            # Ensure log directory exists
+            $logDir = Split-Path $Global:LogFile -Parent
+            if ($logDir -and -not (Test-Path $logDir)) {
+                New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+            }
+
+            # Append to log file (UTF8 for cross-platform compatibility)
+            $logEntry | Out-File -FilePath $Global:LogFile -Append -Encoding utf8
+        }
+        catch {
+            # Logging failure should not crash the script
+            # Fall through to console output
+        }
+    }
 
     $rawUI = $null
     $previousForeground = $null
