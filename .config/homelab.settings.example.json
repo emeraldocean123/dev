@@ -116,5 +116,9 @@
     "Cloud": {
         "RcloneRemote": "your-rclone-remote-name",
         "ConfigBackupPath": "backups/homelab-configs"
+    },
+    "Secrets": {
+        "ImmichApiKey": "YOUR_IMMICH_API_KEY_HERE",
+        "ImmichServerUrl": "http://localhost:2283"
     }
 }

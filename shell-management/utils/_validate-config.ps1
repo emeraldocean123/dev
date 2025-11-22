@@ -6,10 +6,10 @@
 # Location: shell-management/utils/_validate-config.ps1
 # Prefix: _ (hidden from homelab.ps1 menu - utility function)
 
+[CmdletBinding()]
 param(
     [Parameter(Mandatory=$false)]
-    [string]$ConfigPath,
-    [switch]$Verbose
+    [string]$ConfigPath
 )
 
 # Import shared utilities
