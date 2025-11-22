@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Last Updated:** November 21, 2025
+**Last Updated:** November 22, 2025
 **Status:** Production / Sanitized
 
 ## Claude Code Configuration

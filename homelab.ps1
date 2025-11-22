@@ -92,7 +92,11 @@ function Show-SubMenu {
         Write-Header "$($CategoryName.ToUpper()) MENUS"
 
         $scripts = Get-ChildItem -Path $Path -Recurse -Include *.ps1, *.py, *.sh |
-                   Where-Object { $_.Name -notlike "_*" -and $_.Name -notlike "common.ps1" } |
+                   Where-Object {
+                       $_.Name -notlike "_*" -and
+                       $_.Name -notlike "common.ps1" -and
+                       $_.DirectoryName -notmatch "\\tools$"
+                   } |
                    Sort-Object Name
 
         if ($scripts.Count -eq 0) {

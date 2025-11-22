@@ -17,7 +17,8 @@ if (Test-Path $libPath) {
     function Write-Console { param($Message, $ForegroundColor) Write-Host $Message -ForegroundColor $ForegroundColor }
 }
 
-$diagnosticsPath = $PSScriptRoot
+# Point to tools/ subdirectory where actual diagnostic scripts live
+$diagnosticsPath = Join-Path $PSScriptRoot "tools"
 
 # Script categories with descriptions
 $categories = @{
