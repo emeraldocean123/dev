@@ -41,7 +41,7 @@ function Show-MainMenu {
     Clear-Host
     Write-Console "╔═══════════════════════════════════════════════════════╗" -ForegroundColor Cyan
     Write-Console "║          HOMELAB MANAGEMENT INTERFACE                 ║" -ForegroundColor Cyan
-    Write-Console "║          Status: Integrated Management (v2.2)         ║" -ForegroundColor Green
+    Write-Console "║          Status: Integrated Management (v2.2)         ║" -ForegroundColor Cyan
     Write-Console "╚═══════════════════════════════════════════════════════╝" -ForegroundColor Cyan
     Write-Console ""
     Write-Console "  Repository: /dev/" -ForegroundColor DarkGray
@@ -81,7 +81,9 @@ function Show-ScriptsMenu {
 
     Clear-Host
     Write-Console "╔═══════════════════════════════════════╗" -ForegroundColor Yellow
-    Write-Console "║   $Title" -ForegroundColor Yellow
+    $padding = 39 - 3 - $Title.Length
+    $titleLine = "║   $Title" + (" " * $padding) + "║"
+    Write-Console $titleLine -ForegroundColor Yellow
     Write-Console "╚═══════════════════════════════════════╝" -ForegroundColor Yellow
     Write-Console ""
 
@@ -110,6 +112,15 @@ function Show-ScriptsMenu {
         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         return
     }
+
+    # Display color legend
+    Write-Console "  Color Key: " -NoNewline -ForegroundColor Gray
+    Write-Console "PowerShell" -NoNewline -ForegroundColor Green
+    Write-Console " | " -NoNewline -ForegroundColor Gray
+    Write-Console "Bash" -NoNewline -ForegroundColor Cyan
+    Write-Console " | " -NoNewline -ForegroundColor Gray
+    Write-Console "Python" -ForegroundColor Magenta
+    Write-Console ""
 
     $scriptMap = @{}
     $index = 1

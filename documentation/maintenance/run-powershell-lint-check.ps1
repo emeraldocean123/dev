@@ -51,25 +51,24 @@ if (-not (Get-Module -ListAvailable -Name PSScriptAnalyzer)) {
 
 Import-Module PSScriptAnalyzer
 
-$devPath = "$env:USERPROFILE\Documents\dev"
+$devPath = "$env:USERPROFILE\Documents\git\dev"
 
 # Critical scripts to always check
 $criticalScripts = @(
-    # Optimized scripts (high priority)
-    "applications\media-players\sync-timestamps-bidirectional-optimized.ps1"
-    "applications\media-players\mylio\remove-all-keywords-optimized.ps1"
-    "applications\media-players\scan-mylio-exif-anomalies-optimized.ps1"
-    "photos\mylio\scan-mylio-dates-optimized.ps1"
-    "applications\media-players\scan-embedded-metadata-optimized.ps1"
+    # Homelab menu
+    "homelab.ps1"
 
-    # Entry point scripts
-    "applications\media-players\run-full-mylio-sync-live.ps1"
-    "applications\media-players\run-batch-timestamp-sync.ps1"
-    "applications\media-players\sync-single-folder.ps1"
+    # Infrastructure scripts
+    "infrastructure\hardware\check-caldigit.ps1"
+    "infrastructure\network\wake-on-lan.ps1"
+    "infrastructure\storage\drive-management\set-drive-letters.ps1"
 
-    # Old scripts (should show issues)
-    "applications\media-players\sync-timestamps-bidirectional.ps1"
-    "applications\media-players\mylio\remove-all-keywords.ps1"
+    # Shell management
+    "shell-management\shell-backup\backup-configs-to-cloud.ps1"
+
+    # Documentation maintenance
+    "documentation\maintenance\audit-dev-folder-comprehensive.ps1"
+    "documentation\maintenance\cleanup-dev-folder.ps1"
 )
 
 if ($All) {
@@ -99,7 +98,13 @@ $issuesBySeverity = @{
     Information = 0
 }
 
-$reportPath = "$env:USERPROFILE\Documents\dev\documentation\audits\powershell-lint-report-$(Get-Date -Format 'yyyy-MM-dd-HHmmss').md"
+# Create reports directory if it doesn't exist
+$reportDir = Join-Path $devPath "documentation\reports"
+if (-not (Test-Path $reportDir)) {
+    New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
+}
+
+$reportPath = Join-Path $reportDir "powershell-lint-report-$(Get-Date -Format 'yyyy-MM-dd-HHmmss').md"
 
 "# PowerShell Script Lint Report`n" | Out-File -FilePath $reportPath -Encoding UTF8
 "**Generated:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n" | Out-File -FilePath $reportPath -Append -Encoding UTF8
