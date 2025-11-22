@@ -43,8 +43,15 @@ media/tools/**/configs/*.json
 !.config/homelab.settings.example.json
 
 # Generated reports (user-specific data)
-documentation/reports/health-report-*.md
+documentation/reports/*-report-*.md
 !documentation/reports/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 
 # Archive exceptions (we want to keep archive folders but ignore their contents)
 # Uncomment if you want to exclude archive contents:
